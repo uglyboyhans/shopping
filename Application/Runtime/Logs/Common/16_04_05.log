@@ -1,0 +1,12 @@
+[ 2016-04-05T18:50:31+08:00 ] 127.0.0.1 /index.php?m=account&f=isLogin
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000016s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000349s ]
+ERR: 无法加载模块:Account
+
+[ 2016-04-05T18:50:43+08:00 ] 127.0.0.1 /index.php?m=account&f=login
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000023s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000269s ]
+ERR: 无法加载模块:Account
+
