@@ -1,3 +1,3 @@
 # shopping
-granguation project
+graguation project
 Don't copy
