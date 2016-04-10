@@ -30,8 +30,6 @@ use Think\Controller;
 class AccountController extends Controller
 {
 
-    protected $userid;
-
     /**
      * 构造函数
      * 
@@ -63,6 +61,18 @@ class AccountController extends Controller
     {
         $params = I('post.');
         $result = D('Account')->login($params);
+        echo json_encode($result);
+    }
+
+    /**
+     * 管理员登录
+     * 
+     * @return void
+     */
+    public function adminLogin()
+    {
+        $params = I('post.');
+        $result = D('Account')->adminLogin($params);
         echo json_encode($result);
     }
 

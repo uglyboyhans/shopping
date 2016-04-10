@@ -57,7 +57,7 @@ class AccountModel extends Model
     {
         $account = $args['account'];
         $password = $args['password'];
-        //先用户检查是否存在
+        //先检查用户是否存在
         $sql = "select userid from memberaccount where account = '$account'";
         $result = $this->query($sql);
         if ($result) {
@@ -88,7 +88,7 @@ class AccountModel extends Model
     {
         $account = $args['account'];
         $password = $args['password'];
-        //先用户检查是否存在
+        //先检查用户是否存在
         $sql = "select userid from memberaccount where account = '$account'";
         $result = $this->query($sql);
         if (!$result) {
@@ -111,19 +111,56 @@ class AccountModel extends Model
     }
 
     /**
+     * 管理员登录
+     * 
+     * @param array $args 账号密码
+     * 
+     * @return array 结果代码
+     */
+    public function adminLogin($args)
+    {
+        $account = $args['account'];
+        $password = $args['password'];
+        //先检查用户是否存在
+        $sql = "select adminid from adminaccount where adminaccount = '$account'";
+        $result = $this->query($sql);
+        if (!$result) {
+            return [
+                "result" => 1
+            ];
+        }
+        $sql = "select adminid from adminaccount where adminaccount = '$account' and password=password('$password')";
+        $result = $this->query($sql);
+        if (!$result) {
+            return [
+                "result" => 2
+            ];
+        } else {
+            session('adminLogin', $result[0]['adminid']);
+            return [
+                "result" => 0
+            ];
+        }
+    }
+
+    /**
      * 检查是否登录
      * 
      * @return array 结果代码
      */
     public function isLogin()
     {
-        if (!$this->userid) {
+        if ($this->userid) {
             $result = [
-                "result" => 1
+                "result" => 0
+            ];
+        } elseif (session('adminLogin')) {
+            $result = [
+                "result" => 2
             ];
         } else {
             $result = [
-                "result" => 0
+                "result" => 1
             ];
         }
         return $result;
