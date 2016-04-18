@@ -62,9 +62,9 @@ class ProductModel extends Model
         $pageindex = $args['pageindex'] ? $args['pageindex'] : 0;
         $pagesize = $args['pagesize'] ? $args['pagesize'] : 24;
 
-        $sql = "select d.productname,d.price,d.cover,s.sales,s.avescore"
+        $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
-            . " where d.productname like '%$productname%' order by s.summaryid desc";
+            . " where d.isused=1 and d.productname like '%$productname%' order by s.summaryid desc";
         if ($byprice == 1) {
             $sql = $sql . ",d.price desc";
         }
