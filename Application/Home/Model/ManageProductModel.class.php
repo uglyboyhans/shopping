@@ -68,9 +68,9 @@ class ManageProductModel extends Model
         $content = $args['content'] ? $args['content'] : '';
         $cover = $args['cover'] ? $args['cover'] : '';
 
-        $sql = "insert into productdetail "
-            . "(productname,price,chargeunit,stock,abstract,content,cover) values "
-            . "('$productname','$price','$chargeunit','$stock','$abstract','$content','$cover')";
+        $sql = "insert into productdetail"
+            . " (productname,price,chargeunit,stock,abstract,content,cover) values"
+            . " ('$productname','$price','$chargeunit','$stock','$abstract','$content','$cover')";
         if ($this->execute($sql)) {
             return [
                 "result" => 0
