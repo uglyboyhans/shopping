@@ -49,7 +49,7 @@ class UserModelTest extends \PHPUnit_Framework_TestCase
             "birthdate" => '1993-12-18'
         ];
         $result = $this->object->editUserInfo($args);
-        $this->assertGreaterThanOrEqual(0,$result);
+        $this->assertGreaterThanOrEqual(0,$result->result);
     }
 
 }

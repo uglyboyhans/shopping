@@ -64,7 +64,8 @@ class ProductModel extends Model
 
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
-            . " where d.isused=1 and d.productname like '%$productname%' order by s.summaryid desc";
+            . " where d.isused=1 and d.isdelete=0 and d.productname like '%$productname%'"
+            . " order by s.summaryid desc";
         if ($byprice == 1) {
             $sql = $sql . ",d.price desc";
         }
@@ -86,6 +87,27 @@ class ProductModel extends Model
         } else {
             return[
                 'result' => 1
+            ];
+        }
+    }
+
+    public function productDetail($args)
+    {
+        $productid = $args['productid'];
+        $sql = "select d.productname,d.price,d.cover,s.sales,s.avescore,"
+            . " d.chargeunit,d.stock,d.abstract,d.content,d.createtime"
+            . " from productdetail d"
+            . " left join productsummary s on d.productid = s.product"
+            . " where d.productid = $productid and d.isdelete=0 and d.isused=1";
+        $result = $this->query($sql);
+        if (!$result) {
+            return [
+                "result" => 1,
+            ];
+        } else {
+            return [
+                "result" => 0,
+                "product" => $result[0],
             ];
         }
     }

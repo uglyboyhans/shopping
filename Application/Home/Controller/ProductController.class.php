@@ -52,4 +52,21 @@ class ProductController extends Controller
         echo json_encode($result);
     }
 
+    /**
+     * 查看单个商品详情
+     * 
+     * @return void
+     */
+    public function productDetail()
+    {
+        $params = I('get.');
+        if (!$params['productid']) {
+            $params = I('post.');
+            $result = D('Product')->productDetail($params);
+        } else {
+            $result = D('Product')->productDetail($params);
+        }
+        echo json_encode($result);
+    }
+
 }
