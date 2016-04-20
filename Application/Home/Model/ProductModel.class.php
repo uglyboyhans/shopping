@@ -59,7 +59,7 @@ class ProductModel extends Model
         $byprice = $args['byprice'] ? $args['byprice'] : 0;
         $byscore = $args['byscore'] ? $args['byscore'] : 0;
         $bysales = $args['bysales'] ? $args['bysales'] : 0;
-        $pageindex = $args['pageindex'] ? $args['pageindex'] : 0;
+        $pageindex = $args['pageindex'] ? $args['pageindex'] : 1;
         $pagesize = $args['pagesize'] ? $args['pagesize'] : 24;
 
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
@@ -75,7 +75,10 @@ class ProductModel extends Model
         if ($bysales == 1) {
             $sql = $sql . ",s.sales";
         }
-        $start = $pageindex * $pagesize;
+        if($pageindex<1) {
+            $pageindex = 1;
+        }
+        $start = ($pageindex-1) * $pagesize;
         $sql = $sql . " limit $start,$pagesize";
         $result = $this->query($sql); //结果集
         if ($result) {
