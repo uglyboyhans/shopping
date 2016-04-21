@@ -33,7 +33,7 @@ class ProductModel extends Model
     //数据库表，查不到会报错
     protected $tableName = 'productdetail';
     //管理员id
-    protected $userid;
+    protected $userId;
 
     /**
      * 构造函数
@@ -43,7 +43,7 @@ class ProductModel extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->userid = session('login');
+        $this->userId = session('login');
     }
 
     /**
@@ -56,30 +56,33 @@ class ProductModel extends Model
     public function searchProduct($args)
     {
         $productname = $args['productname'] ? $args['productname'] : '';
-        $byprice = $args['byprice'] ? $args['byprice'] : 0;
-        $byscore = $args['byscore'] ? $args['byscore'] : 0;
-        $bysales = $args['bysales'] ? $args['bysales'] : 0;
-        $pageindex = $args['pageindex'] ? $args['pageindex'] : 1;
-        $pagesize = $args['pagesize'] ? $args['pagesize'] : 24;
+        $byPrice = $args['byprice'] ? $args['byprice'] : 0;
+        $byScore = $args['byscore'] ? $args['byscore'] : 0;
+        $bySales = $args['bysales'] ? $args['bysales'] : 0;
+        $pageIndex = $args['pageindex'] ? $args['pageindex'] : 1;
+        $pageSize = $args['pagesize'] ? $args['pagesize'] : 24;
 
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
             . " where d.isused=1 and d.isdelete=0 and d.productname like '%$productname%'"
             . " order by s.summaryid desc";
-        if ($byprice == 1) {
+        if ($byPrice == 1) {
             $sql = $sql . ",d.price desc";
         }
-        if ($byscore == 1) {
+        if ($byScore == 1) {
             $sql = $sql . ",s.avescore";
         }
-        if ($bysales == 1) {
+        if ($bySales == 1) {
             $sql = $sql . ",s.sales";
         }
-        if($pageindex<1) {
-            $pageindex = 1;
+        if ($pageIndex < 1) {
+            $pageIndex = 1;
         }
-        $start = ($pageindex-1) * $pagesize;
-        $sql = $sql . " limit $start,$pagesize";
+        if ($pageSize < 1) {
+            $pageSize = 1;
+        }
+        $start = ($pageIndex - 1) * $pageSize;
+        $sql = $sql . " limit $start,$pageSize";
         $result = $this->query($sql); //结果集
         if ($result) {
             return [
@@ -96,12 +99,12 @@ class ProductModel extends Model
 
     public function productDetail($args)
     {
-        $productid = $args['productid'];
+        $productId = $args['productid'];
         $sql = "select d.productname,d.price,d.cover,s.sales,s.avescore,"
             . " d.chargeunit,d.stock,d.abstract,d.content,d.createtime"
             . " from productdetail d"
             . " left join productsummary s on d.productid = s.product"
-            . " where d.productid = $productid and d.isdelete=0 and d.isused=1";
+            . " where d.productid = $productId and d.isdelete=0 and d.isused=1";
         $result = $this->query($sql);
         if (!$result) {
             return [
