@@ -81,7 +81,7 @@ class UserModel extends Model
             . " birthdate = '$birthdate',"
             . " phonenumber = '$phonenumber',"
             . " gender = $gender";
-        if ($this->execute($sql)>=0) {
+        if ($this->execute($sql) >= 0) {
             $result = [
                 "result" => 0
             ];
