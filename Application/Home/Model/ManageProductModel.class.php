@@ -33,7 +33,7 @@ class ManageProductModel extends Model
     //数据库表，查不到会报错
     protected $tableName = 'productdetail';
     //管理员id
-    protected $adminid;
+    protected $adminId;
 
     /**
      * 构造函数
@@ -43,7 +43,7 @@ class ManageProductModel extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->adminid = session('adminLogin');
+        $this->adminId = session('adminLogin');
     }
 
     /**
@@ -55,9 +55,9 @@ class ManageProductModel extends Model
      */
     public function createProduct($args)
     {
-        if (!$this->adminid) {//检查登录
+        if (!$this->adminId) {//检查登录
             return [
-                "result" => 1
+                "result" => 2
             ];
         }
         $productname = $args['productname'] ? $args['productname'] : '';
@@ -79,6 +79,190 @@ class ManageProductModel extends Model
             return [
                 "result" => 1
             ];
+        }
+    }
+
+    /**
+     * 查找商品
+     * 
+     * @param array $args 搜索条件
+     * 
+     * @return array
+     */
+    public function searchProduct($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productName = $args['productname'] ? $args['productname'] : '';
+        $byPrice = $args['byprice'] ? $args['byprice'] : 0;
+        $byScore = $args['byscore'] ? $args['byscore'] : 0;
+        $bySales = $args['bysales'] ? $args['bysales'] : 0;
+        $pageIndex = $args['pageindex'] ? $args['pageindex'] : 1;
+        $pageSize = $args['pagesize'] ? $args['pagesize'] : 24;
+
+        $sql = "select d.productid,d.productname,d.price,d.cover,d.isused,s.sales,s.avescore"
+            . " from productdetail d left join productsummary s on d.productid = s.product"
+            . " where d.isdelete=0 and d.productname like '%$productName%'"
+            . " order by s.summaryid desc";
+        if ($byPrice == 1) {
+            $sql = $sql . ",d.price desc";
+        }
+        if ($byScore == 1) {
+            $sql = $sql . ",s.avescore";
+        }
+        if ($bySales == 1) {
+            $sql = $sql . ",s.sales";
+        }
+        if ($pageIndex < 1) {
+            $pageIndex = 1;
+        }
+        if ($pageSize < 1) {
+            $pageSize = 1;
+        }
+        $start = ($pageIndex - 1) * $pageSize;
+        $sql = $sql . " limit $start,$pageSize";
+        $result = $this->query($sql); //结果集
+        if ($result) {
+            return [
+                'result' => 0,
+                'count' => count($result),
+                'product' => $result,
+            ];
+        } else {
+            return[
+                'result' => 1
+            ];
+        }
+    }
+
+    /**
+     * 将商品设置为使用状态
+     * 
+     * @param array $args id
+     * 
+     * @return array
+     */
+    public function setUse($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productId = $args['productid'];
+        //将使用状态isused置为1
+        $sql = "update productdetail set isused=1 where productid = $productId";
+        if (!$this->execute($sql)) {
+            return [
+                "result" => 1
+            ];
+        }
+        //检查总表是否有这条
+        if (!$this->_isExistInSummaryByProductId($productId)) {
+            //将商品添加到商品总表
+            $sql = "insert into productsummary"
+                . " (product,sales,avescore,createtime,updatetime) values"
+                . " ($productId,0,5,now(),now())";
+            if (!$this->execute($sql)) {
+                return [
+                    "result" => 1
+                ];
+            } else {
+                return [
+                    "result" => 0
+                ];
+            }
+        } else {
+            //若已经有这条，将其恢复
+            $sql = "update productsummary set isdelete=0 where product=$productId";
+            if (!$this->execute($sql)) {
+                return [
+                    "result" => 1
+                ];
+            } else {
+                return [
+                    "result" => 0
+                ];
+            }
+        }
+    }
+
+    /**
+     * 将商品设置为存档状态
+     * 
+     * @param array $args id
+     * 
+     * @return array
+     */
+    public function setNoUse($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productId = $args['productid'];
+        //将使用状态isused置为0
+        $sql = "update productdetail set isused=0 where productid = $productId";
+        if (!$this->execute($sql)) {
+            return [
+                "result" => 1
+            ];
+        }
+
+        //将其从总表删除
+        $sql = "update productsummary set isdelete=1 where product=$productId";
+        if (!$this->execute($sql)) {
+            return [
+                "result" => 1
+            ];
+        } else {
+            return [
+                "result" => 0
+            ];
+        }
+    }
+
+    public function deleteProduct($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productId = $args['productid'];
+        //删除商品：将isdelete置为1
+        $sql = "update productdetail set isdelete=1 where productid = $productId";
+        if (!$this->execute($sql)) {
+            return [
+                "result" => 1
+            ];
+        } else {
+            return [
+                "resutl" => 0
+            ];
+        }
+    }
+
+    /**
+     * 通过productId判断是否在总表中存在
+     * 
+     * @param int $productId 商品id 
+     * 
+     * @access private
+     * 
+     * @return bool
+     */
+    private function _isExistInSummaryByProductId($productId)
+    {
+        $sql = "select summaryid from productsummary where product =$productId";
+        if (!$this->query($sql)) {
+            return false;
+        } else {
+            return true;
         }
     }
 

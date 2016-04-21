@@ -52,4 +52,52 @@ class ManageProductController extends Controller
         echo json_encode($result);
     }
 
+    /**
+     * 搜索商品
+     * 
+     * @return void
+     */
+    public function searchProduct()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->searchProduct($params);
+        echo json_encode($result);
+    }
+
+    /**
+     * 将商品设置为使用状态
+     * 
+     * @return void
+     */
+    public function setUse()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->setUse($params);
+        echo json_encode($result);
+    }
+
+    /**
+     * 将商品设置为存档状态
+     * 
+     * @return void
+     */
+    public function setNoUse()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->setNoUse($params);
+        echo json_encode($result);
+    }
+
+    /**
+     * 删除商品
+     * 
+     * @return void
+     */
+    public function deleteProduct()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->deleteProduct($params);
+        echo json_encode($result);
+    }
+
 }
