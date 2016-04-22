@@ -99,5 +99,28 @@ class ManageProductController extends Controller
         $result = D('ManageProduct')->deleteProduct($params);
         echo json_encode($result);
     }
-
+    
+    /**
+     * 编辑商品，通过id获取已有的商品信息
+     * 
+     * @return void
+     */
+    public function editProduct()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->editProduct($params);
+        echo json_encode($result);
+    }
+    
+    /**
+     * 保存编辑信息
+     * 
+     * @return void
+     */
+    public function saveEdit()
+    {
+        $params = I('post.');
+        $result = D('ManageProduct')->saveEdit($params);
+        echo json_encode($result);
+    }
 }

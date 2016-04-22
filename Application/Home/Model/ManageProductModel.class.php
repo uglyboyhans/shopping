@@ -70,7 +70,7 @@ class ManageProductModel extends Model
 
         $sql = "insert into productdetail"
             . " (productname,price,chargeunit,stock,abstract,content,cover) values"
-            . " ('$productname','$price','$chargeunit','$stock','$abstract','$content','$cover')";
+            . " ('$productname',$price,'$chargeunit','$stock','$abstract','$content','$cover')";
         if ($this->execute($sql)) {
             return [
                 "result" => 0
@@ -226,6 +226,14 @@ class ManageProductModel extends Model
         }
     }
 
+    
+    /**
+     * 删除商品
+     * 
+     * @param array $args id
+     * 
+     * @return array
+     */
     public function deleteProduct($args)
     {
         if (!$this->adminId) {//检查登录
@@ -235,7 +243,7 @@ class ManageProductModel extends Model
         }
         $productId = $args['productid'];
         //删除商品：将isdelete置为1
-        $sql = "update productdetail set isdelete=1 where productid = $productId";
+        $sql = "update productdetail set isdelete=1 where productid=$productId";
         if (!$this->execute($sql)) {
             return [
                 "result" => 1
@@ -243,6 +251,80 @@ class ManageProductModel extends Model
         } else {
             return [
                 "resutl" => 0
+            ];
+        }
+    }
+
+    /**
+     * 编辑商品，通过id获取已有的商品信息
+     * 
+     * @param array $args 商品id
+     * 
+     * @return array
+     */
+    public function editProduct($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productId = $args['productid'];
+        $sql = "select productname,price,cover,chargeunit,stock,abstract,content"
+            . " from productdetail"
+            . " where productid = $productId";
+        $result = $this->query($sql);
+        if (!$result) {
+            return [
+                "result" => 1,
+            ];
+        } else {
+            return [
+                "result" => 0,
+                "product" => $result[0],
+            ];
+        }
+    }
+
+    /**
+     * 保存编辑信息
+     * 
+     * @param array $args 商品信息
+     * 
+     * @return array
+     */
+    public function saveEdit($args)
+    {
+        if (!$this->adminId) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $productId = $args['productid'];
+        $productname = $args['productname'] ? $args['productname'] : '';
+        $price = $args['price'] ? $args['price'] : 99999999;
+        $chargeunit = $args['chargeunit'] ? $args['chargeunit'] : '';
+        $stock = $args['stock'] ? $args['stock'] : 0;
+        $abstract = $args['abstract'] ? $args['abstract'] : '';
+        $content = $args['content'] ? $args['content'] : '';
+        $cover = $args['cover'] ? $args['cover'] : '';
+
+        $sql = "update productdetail set"
+            . " productname = '$productname',"
+            . " price = $price,"
+            . " chargeunit = '$chargeunit',"
+            . " stock = $stock,"
+            . " abstract = '$abstract',"
+            . " content = '$content',"
+            . " cover = '$cover'"
+            . " where productid = $productId";
+        if ($this->execute($sql)) {
+            return [
+                "result" => 0
+            ];
+        } else {
+            return [
+                "result" => 1
             ];
         }
     }
