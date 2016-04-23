@@ -97,6 +97,13 @@ class ProductModel extends Model
         }
     }
 
+    /**
+     * 获取商品详情
+     * 
+     * @param array $args 商品id
+     * 
+     * @return array
+     */
     public function productDetail($args)
     {
         $productId = $args['productid'];
