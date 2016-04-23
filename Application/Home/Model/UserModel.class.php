@@ -46,6 +46,13 @@ class UserModel extends Model
         $this->userid = session('login');
     }
 
+    /**
+     * 编辑用户个人信息
+     * 
+     * @param array $args 用户个人信息
+     * 
+     * @return array
+     */
     public function editUserInfo($args)
     {
         $realname = $args['realname'] ? $args['realname'] : "";

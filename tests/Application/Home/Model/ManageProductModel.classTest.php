@@ -1,4 +1,5 @@
 <?php
+
 /**
  * 管理商品模块单元测试
  *
@@ -11,6 +12,7 @@
  * @link     http://www.cqu.edu.cn 
  *
  */
+
 namespace Home\Model;
 
 /**
@@ -123,7 +125,6 @@ class ManageProductModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $this->object->deleteProduct($args)->result);
     }
 
-    
     /**
      * 测试编辑商品获取信息
      * 
@@ -137,7 +138,6 @@ class ManageProductModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_array($this->object->editProduct($args)));
     }
 
-    
     /**
      * 测试保存编辑状态
      * 
