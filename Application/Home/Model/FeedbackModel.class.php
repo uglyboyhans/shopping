@@ -49,6 +49,13 @@ class FeedbackModel extends Model
         $this->adminId = session('adminLogin');
     }
 
+    /**
+     * 用户添加反馈
+     * 
+     * @param array $args 反馈内容
+     * 
+     * @return array
+     */
     public function addFeedback($args)
     {
         if (!$this->userid) {
@@ -72,6 +79,13 @@ class FeedbackModel extends Model
         }
     }
 
+    /**
+     * 管理员查看反馈
+     * 
+     * @param array $args 搜索条件
+     * 
+     * @return array
+     */
     public function viewFeedback($args)
     {
         if (!$this->adminId) {
