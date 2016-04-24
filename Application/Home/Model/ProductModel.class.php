@@ -59,8 +59,8 @@ class ProductModel extends Model
         $byPrice = $args['byprice'] ? $args['byprice'] : 0;
         $byScore = $args['byscore'] ? $args['byscore'] : 0;
         $bySales = $args['bysales'] ? $args['bysales'] : 0;
-        $pageIndex = $args['pageindex'] ? $args['pageindex'] : 1;
-        $pageSize = $args['pagesize'] ? $args['pagesize'] : 24;
+        $pageIndex = $args['pageindex']>0 ? $args['pageindex'] : 1;
+        $pageSize = $args['pagesize']>0 ? $args['pagesize'] : 24;
 
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
@@ -74,12 +74,6 @@ class ProductModel extends Model
         }
         if ($bySales == 1) {
             $sql = $sql . ",s.sales";
-        }
-        if ($pageIndex < 1) {
-            $pageIndex = 1;
-        }
-        if ($pageSize < 1) {
-            $pageSize = 1;
         }
         $start = ($pageIndex - 1) * $pageSize;
         $sql = $sql . " limit $start,$pageSize";
