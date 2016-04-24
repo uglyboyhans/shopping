@@ -71,7 +71,7 @@ class ManageProductModel extends Model
         $sql = "insert into productdetail"
             . " (productname,price,chargeunit,stock,abstract,content,cover) values"
             . " ('$productname',$price,'$chargeunit','$stock','$abstract','$content','$cover')";
-        if ($this->execute($sql)) {
+        if ($this->execute($sql) !== false) {
             return [
                 "result" => 0
             ];
@@ -155,7 +155,7 @@ class ManageProductModel extends Model
         $productId = $args['productid'];
         //将使用状态isused置为1
         $sql = "update productdetail set isused=1 where productid = $productId";
-        if (!$this->execute($sql)) {
+        if ($this->execute($sql) !== false) {
             return [
                 "result" => 1
             ];
@@ -166,7 +166,7 @@ class ManageProductModel extends Model
             $sql = "insert into productsummary"
                 . " (product,sales,avescore,createtime,updatetime) values"
                 . " ($productId,0,5,now(),now())";
-            if (!$this->execute($sql)) {
+            if ($this->execute($sql) === false) {
                 return [
                     "result" => 1
                 ];
@@ -178,7 +178,7 @@ class ManageProductModel extends Model
         } else {
             //若已经有这条，将其恢复
             $sql = "update productsummary set isdelete=0 where product=$productId";
-            if (!$this->execute($sql)) {
+            if ($this->execute($sql) === false) {
                 return [
                     "result" => 1
                 ];
@@ -207,7 +207,7 @@ class ManageProductModel extends Model
         $productId = $args['productid'];
         //将使用状态isused置为0
         $sql = "update productdetail set isused=0 where productid = $productId";
-        if (!$this->execute($sql)) {
+        if ($this->execute($sql) === false) {
             return [
                 "result" => 1
             ];
@@ -215,7 +215,7 @@ class ManageProductModel extends Model
 
         //将其从总表删除
         $sql = "update productsummary set isdelete=1 where product=$productId";
-        if (!$this->execute($sql)) {
+        if ($this->execute($sql) === false) {
             return [
                 "result" => 1
             ];
@@ -226,7 +226,6 @@ class ManageProductModel extends Model
         }
     }
 
-    
     /**
      * 删除商品
      * 
@@ -244,7 +243,7 @@ class ManageProductModel extends Model
         $productId = $args['productid'];
         //删除商品：将isdelete置为1
         $sql = "update productdetail set isdelete=1 where productid=$productId";
-        if (!$this->execute($sql)) {
+        if ($this->execute($sql) === false) {
             return [
                 "result" => 1
             ];
@@ -318,7 +317,7 @@ class ManageProductModel extends Model
             . " content = '$content',"
             . " cover = '$cover'"
             . " where productid = $productId";
-        if ($this->execute($sql)) {
+        if ($this->execute($sql) !== false) {
             return [
                 "result" => 0
             ];

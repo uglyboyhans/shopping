@@ -55,6 +55,11 @@ class UserModel extends Model
      */
     public function editUserInfo($args)
     {
+        if (!$this->userid) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
         $realname = $args['realname'] ? $args['realname'] : "";
         $idcard = $args['idcard'] ? $args['idcard'] : "";
         $address1 = $args['address1'] ? $args['address1'] : "";
@@ -88,7 +93,7 @@ class UserModel extends Model
             . " birthdate = '$birthdate',"
             . " phonenumber = '$phonenumber',"
             . " gender = $gender";
-        if ($this->execute($sql) >= 0) {
+        if ($this->execute($sql) !== false) {
             $result = [
                 "result" => 0
             ];

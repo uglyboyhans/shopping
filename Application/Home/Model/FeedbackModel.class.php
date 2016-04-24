@@ -65,27 +65,27 @@ class FeedbackModel extends Model
         $sql = "insert into feedback"
             . " (user,content) values"
             . " ($this->userid,'$content')";
-        if ($this->execute($sql)) {
+        if ($this->execute($sql) !== false) {
             return [
                 "result" => 0,
             ];
         }
     }
-    
+
     public function viewFeedback($args)
     {
-        if(!$this->adminId) {
+        if (!$this->adminId) {
             return [
                 "result" => 2,
             ];
         }
-        $content = $args['content']?$args['content']:"";
-        $bytime = $args['bytime']==1?1:0;
-        $pageIndex = $args['pageindex']>0?$args['pageindex']:1;
-        $pageSize = $args['pagesize']>0?$args['pagesize']:24;
+        $content = $args['content'] ? $args['content'] : "";
+        $bytime = $args['bytime'] == 1 ? 1 : 0;
+        $pageIndex = $args['pageindex'] > 0 ? $args['pageindex'] : 1;
+        $pageSize = $args['pagesize'] > 0 ? $args['pagesize'] : 24;
         $sql = "select feedbackid,content,createtime from feedback"
             . " where content like '%$content%' order by createtime";
-        if($bytime !== 1){
+        if ($bytime !== 1) {
             $sql = $sql . " desc";
         }
         $start = ($pageIndex - 1) * $pageSize;
@@ -101,7 +101,7 @@ class FeedbackModel extends Model
             return[
                 'result' => 1
             ];
-        } 
+        }
     }
 
 }

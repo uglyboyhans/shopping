@@ -147,11 +147,12 @@ class ManageProductModelTest extends \PHPUnit_Framework_TestCase
     {
         $args = [
             "productid" => 1,
-            "productname" => "单元测试" . time(),
+            "productname" => "单元测试",// . time(),
             "price" => 122,
             "abstract" => "单元测试"
         ];
-        $this->assertGreaterThanOrEqual(0, ($this->object->saveEdit($args)->result));
+        //$this->assertGreaterThanOrEqual(0, ($this->object->saveEdit($args)->result));
+        $this->assertEquals(0, ($this->object->saveEdit($args)->result));
     }
 
 }
