@@ -32,8 +32,6 @@ class CartModelTest extends \PHPUnit_Framework_TestCase
      * @var CartModel
      */
     protected $object;
-    
-    protected $indent;
 
     /**
      * 建立基境
@@ -46,7 +44,6 @@ class CartModelTest extends \PHPUnit_Framework_TestCase
         session("login", 5);
 
         $this->object = new CartModel;
-        $this->indent = new IndentModel;
     }
 
     /**

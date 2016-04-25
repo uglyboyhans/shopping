@@ -66,7 +66,7 @@ class CartModel extends Model
                 "result" => 1
             ];
         }
-        $count = $args['count'] > 0 ? $args['count'] : 1;
+        $count = intval($args['count'])>=1?intval($args['count']):1;
         $sql = "insert into cart (user,product,count)"
             . " values ($this->userid,$productid,$count)";
         if ($this->execute($sql) !== false) {
