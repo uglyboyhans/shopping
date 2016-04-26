@@ -66,6 +66,12 @@ class IndentModel extends Model
                 "result" => 1,
             ];
         }
+        $address = $args['address'];
+        if(!$address){
+            return [
+                "result" => 1,
+            ];
+        }
         $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
         //查出价格
         $sql = "select price from productdetail where productid=$productid";
@@ -83,8 +89,8 @@ class IndentModel extends Model
          * @todo 付款
          */
         //添加到订单：
-        $sql = "insert into indent (user,product,count,total,updatetime)"
-            . " values ($this->userid,$productid,$count,$total,now())";
+        $sql = "insert into indent (user,product,count,total,address,updatetime)"
+            . " values ($this->userid,$productid,$count,$total,$address,now())";
         if ($this->execute($sql) !== false) {
             /**
              * @todo 添加通知
@@ -122,6 +128,12 @@ class IndentModel extends Model
             }
         }
         $cartids = $cartids . implode(',', $args) . ')'; //拼接字符串
+        $address = $args['address'];
+        if(!$address){
+            return [
+                "result" => 1,
+            ];
+        }
         //从cart里查出相关信息：
         //cart:c, productdetail:p
         $sql = "select c.count as count,c.product as productid,p.price as price"
@@ -150,7 +162,7 @@ class IndentModel extends Model
             $count = $value['count'];
             $productid = $value['productid'];
             $oneTotal = floatval($value['total']);
-            $sql = "insert into indent (user,product,count,total,updatetime)"
+            $sql = "insert into indent (user,product,count,total,address,updatetime)"
                 . " values ($this->userid,$productid,$count,$oneTotal,now())";
             if ($this->execute($sql) !== false) {
                 /**
