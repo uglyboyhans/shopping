@@ -71,7 +71,31 @@ class UserModelTest extends \PHPUnit_Framework_TestCase
             "birthdate" => '1993-12-18'
         ];
         $result = $this->object->editUserInfo($args);
-        $this->assertEquals(0, $result->result);
+        $this->assertEquals(0, $result['result']);
+    }
+
+    /**
+     * 测试获取地址
+     * 
+     * @return void
+     */
+    public function testGetAddress()
+    {
+        $result = $this->object->getAddress();
+        $this->assertEquals(0, $result['result']);
+        $this->assertTrue(is_array($result['address']));
+    }
+
+    /**
+     * 测试全量获取用户信息
+     * 
+     * @return void
+     */
+    public function testGetUserInfo()
+    {
+        $result = $this->object->getUserInfo();
+        $this->assertEquals(0, $result['result']);
+        $this->assertTrue(is_array($result['address']));
     }
 
 }

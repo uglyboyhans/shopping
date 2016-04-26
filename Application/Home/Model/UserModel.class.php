@@ -105,4 +105,60 @@ class UserModel extends Model
         return $result;
     }
 
+    /**
+     * 获取地址
+     * 
+     * @return array
+     */
+    public function getAddress()
+    {
+        if (!$this->userid) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $sql = "select address1,address2,address3,address4 from userinfo"
+            . " where user=$this->userid";
+        $result = $this->query($sql);
+        if ($result) {
+            return [
+                "result" => 0,
+                "address" => $result,
+            ];
+        } else {
+            return [
+                "result" => 1,
+                "error" => '查询失败，也许您尚未设置自己的地址信息'
+            ];
+        }
+    }
+
+    /**
+     * 全量获取用户信息
+     * 
+     * @return array
+     */
+    public function getUserInfo()
+    {
+        if (!$this->userid) {//检查登录
+            return [
+                "result" => 2
+            ];
+        }
+        $sql = "select * from userinfo"
+            . " where user=$this->userid";
+        $result = $this->query($sql);
+        if ($result) {
+            return [
+                "result" => 0,
+                "address" => $result,
+            ];
+        } else {
+            return [
+                "result" => 1,
+                "error" => '查询失败，也许您尚未设置自己的详细信息'
+            ];
+        }
+    }
+
 }

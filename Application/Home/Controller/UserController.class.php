@@ -52,4 +52,26 @@ class UserController extends Controller
         echo json_encode($result);
     }
 
+    /**
+     * 获取地址
+     * 
+     * @return void
+     */
+    public function getAddress()
+    {
+        $result = D('User')->getAddress();
+        echo json_encode($result);
+    }
+    
+    /**
+     * 全量获取用户信息
+     * 
+     * @return void
+     */
+    public function getUserInfo()
+    {
+        $result = D('User')->getUserInfo();
+        echo json_encode($result);
+    }
+
 }
