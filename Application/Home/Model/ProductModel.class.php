@@ -59,8 +59,8 @@ class ProductModel extends Model
         $byPrice = $args['byprice'] ? $args['byprice'] : 0;
         $byScore = $args['byscore'] ? $args['byscore'] : 0;
         $bySales = $args['bysales'] ? $args['bysales'] : 0;
-        $pageIndex = $args['pageindex']>0 ? $args['pageindex'] : 1;
-        $pageSize = $args['pagesize']>0 ? $args['pagesize'] : 24;
+        $pageIndex = $args['pageindex'] > 0 ? $args['pageindex'] : 1;
+        $pageSize = $args['pagesize'] > 0 ? $args['pagesize'] : 24;
 
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
@@ -86,7 +86,8 @@ class ProductModel extends Model
             ];
         } else {
             return[
-                'result' => 1
+                'result' => 1,
+                "error" => "搜索失败，或没有符合查询条件的商品"
             ];
         }
     }
@@ -110,6 +111,7 @@ class ProductModel extends Model
         if (!$result) {
             return [
                 "result" => 1,
+                "error" => "获取商品信息失败"
             ];
         } else {
             return [

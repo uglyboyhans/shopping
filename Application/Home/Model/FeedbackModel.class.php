@@ -60,13 +60,15 @@ class FeedbackModel extends Model
     {
         if (!$this->userid) {
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $content = $args['content'];
         if (!$content) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "参数错误"
             ];
         }
         $sql = "insert into feedback"
@@ -75,6 +77,11 @@ class FeedbackModel extends Model
         if ($this->execute($sql) !== false) {
             return [
                 "result" => 0,
+            ];
+        } else {
+            return [
+                "result" => 1,
+                "error" => "添加反馈失败"
             ];
         }
     }
@@ -91,6 +98,7 @@ class FeedbackModel extends Model
         if (!$this->adminId) {
             return [
                 "result" => 2,
+                "error" => "管理员未登录"
             ];
         }
         $content = $args['content'] ? $args['content'] : "";
@@ -113,7 +121,8 @@ class FeedbackModel extends Model
             ];
         } else {
             return[
-                'result' => 1
+                'result' => 1,
+                "error" => "查询失败或没有反馈"
             ];
         }
     }

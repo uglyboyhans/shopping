@@ -57,13 +57,15 @@ class CartModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $productid = $args['productid'];
         if (!$productid) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => '参数错误'
             ];
         }
         $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
@@ -75,7 +77,8 @@ class CartModel extends Model
             ];
         } else {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => '程序错误'
             ];
         }
     }
@@ -89,7 +92,8 @@ class CartModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         //cart:c, productdetail:p
@@ -107,6 +111,7 @@ class CartModel extends Model
         } else {
             return [
                 "result" => 1,
+                "error" => '查找失败或购物车为空'
             ];
         }
     }
@@ -122,7 +127,8 @@ class CartModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $cartids = $args['cartid'] ? $args['cartid'] : 0;
@@ -136,7 +142,8 @@ class CartModel extends Model
                 ];
             } else {
                 return [
-                    "result" => 1
+                    "result" => 1,
+                    "error" => '删除失败'
                 ];
             }
         } else {//如果是数组
@@ -148,7 +155,8 @@ class CartModel extends Model
                     . " where cartid=$cartid";
                 if ($this->execute($sql) === false) {
                     return [
-                        "result" => 1
+                        "result" => 1,
+                        "error" => '部分商品可能移除失败'
                     ];
                 }
             }
@@ -169,7 +177,8 @@ class CartModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
 
@@ -179,7 +188,8 @@ class CartModel extends Model
             //从购物车批量付款并添加到订单,直接传$args:
             if (0 !== D('Indent')->payForCart($args)['result']) {
                 return [
-                    "result" => 1
+                    "result" => 1,
+                    "error" => "添加订单失败"
                 ];
             }
         } else {
@@ -194,13 +204,15 @@ class CartModel extends Model
                 ];
             } else {
                 return [
-                    "result" => 3
+                    "result" => 3,
+                    "error" => "商品已失效"
                 ];
             }
             //购买单个商品并添加到订单:
             if (0 !== D('Indent')->payForOne($param)['result']) {
                 return [
-                    "result" => 1
+                    "result" => 1,
+                    "error" => "添加订单失败"
                 ];
             }
         }

@@ -58,18 +58,21 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $productid = $args['productid'];
         if (!$productid) {
             return [
                 "result" => 1,
+                "error" => "参数错误"
             ];
         }
         $address = $args['address'];
         if (!$address) {
             return [
                 "result" => 1,
+                "error" => "参数错误"
             ];
         }
         $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
@@ -79,6 +82,7 @@ class IndentModel extends Model
         if (!$result) {
             return [
                 "result" => 1,
+                'error' => "查询价格失败，也许商品已经失效"
             ];
         } else {
             //算出总价
@@ -101,6 +105,7 @@ class IndentModel extends Model
         } else {
             return [
                 "result" => 1,
+                "error" => "添加到订单失败"
             ];
         }
     }
@@ -117,6 +122,7 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $total = floatval(0); //总价
@@ -144,7 +150,8 @@ class IndentModel extends Model
         $result = $this->query($sql);
         if (!$result) {
             return [
-                "result" => 1
+                "result" => 1,
+                'error' => "查询商品信息失败，也许商品已经失效"
             ];
         } else {
             foreach ($result as $value) {
@@ -173,6 +180,7 @@ class IndentModel extends Model
             } else {
                 return [
                     "result" => 1,
+                    "error" => "部分商品添加失败，请联系管理员"
                 ];
             }
         }
@@ -192,6 +200,7 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         //indent:i productdetail:p
@@ -205,6 +214,7 @@ class IndentModel extends Model
         if (!$result) {
             return [
                 "result" => 1,
+                "error" => "查询失败，或暂无订单"
             ];
         } else {
             return [
@@ -227,6 +237,7 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $indentid = $args['indentid'];
@@ -242,6 +253,7 @@ class IndentModel extends Model
         } else {//交易未完成
             return [
                 "result" => 3,
+                "error" => "交易未完成,不能删除"
             ];
         }
     }
@@ -258,6 +270,7 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $indentid = $args['indentid'];
@@ -274,10 +287,16 @@ class IndentModel extends Model
                     "result" => 0
                 ];
             } else {
-                return ["result" => 1];
+                return [
+                    "result" => 1,
+                    "error" => "更新订单状态失败"
+                ];
             }
         } else {
-            return ["result" => 1];
+            return [
+                "result" => 1,
+                "error" => "添加退款失败"
+            ];
         }
     }
 
@@ -293,6 +312,7 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $indentid = $args['indentid'];
@@ -308,10 +328,16 @@ class IndentModel extends Model
                     "result" => 0
                 ];
             } else {
-                return ["result" => 1];
+                return [
+                    "result" => 1,
+                    "error" => "更新物流状态失败"
+                ];
             }
         } else {
-            return ["result" => 1];
+            return [
+                "result" => 1,
+                "error" => "更新订单状态失败"
+            ];
         }
     }
 
@@ -327,9 +353,16 @@ class IndentModel extends Model
         if (!$this->userid) {//检查登录
             return [
                 "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $indentid = $args['indentid'];
+        if (!$indentid) {
+            return [
+                "result" => 1,
+                "error" => '参数错误'
+            ];
+        }
         $score = floatval($args['score']) > 0 ? floatval($args['score']) : 5;
         if ($score > 5) {
             $score = 5;
@@ -354,13 +387,22 @@ class IndentModel extends Model
                         "result" => 0
                     ];
                 } else {
-                    return ["result" => 1];
+                    return [
+                        "result" => 1,
+                        "error" => "更新订单状态失败"
+                    ];
                 }
             } else {
-                return ["result" => 1];
+                return [
+                    "result" => 1,
+                    "error" => "添加评价失败"
+                ];
             }
         } else {
-            return ["result" => 1];
+            return [
+                "result" => 1,
+                "error" => "获取商品信息失败"
+            ];
         }
     }
 

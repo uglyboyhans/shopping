@@ -57,7 +57,8 @@ class UserModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $realname = $args['realname'] ? $args['realname'] : "";
@@ -94,15 +95,15 @@ class UserModel extends Model
             . " phonenumber = '$phonenumber',"
             . " gender = $gender";
         if ($this->execute($sql) !== false) {
-            $result = [
+            return [
                 "result" => 0
             ];
         } else {
-            $result = [
-                "result" => 1
+            return [
+                "result" => 1,
+                "error" => "保存失败"
             ];
         }
-        return $result;
     }
 
     /**
@@ -114,7 +115,8 @@ class UserModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $sql = "select address1,address2,address3,address4 from userinfo"
@@ -142,7 +144,8 @@ class UserModel extends Model
     {
         if (!$this->userid) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '用户未登录'
             ];
         }
         $sql = "select * from userinfo"

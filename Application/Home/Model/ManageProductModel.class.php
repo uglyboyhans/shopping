@@ -57,7 +57,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productname = $args['productname'] ? $args['productname'] : '';
@@ -77,7 +78,8 @@ class ManageProductModel extends Model
             ];
         } else {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "添加商品失败"
             ];
         }
     }
@@ -93,7 +95,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productName = $args['productname'] ? $args['productname'] : '';
@@ -133,7 +136,8 @@ class ManageProductModel extends Model
             ];
         } else {
             return[
-                'result' => 1
+                'result' => 1,
+                "error" => "查询失败，或商品为空"
             ];
         }
     }
@@ -149,7 +153,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productId = $args['productid'];
@@ -157,7 +162,8 @@ class ManageProductModel extends Model
         $sql = "update productdetail set isused=1 where productid = $productId";
         if ($this->execute($sql) !== false) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "修改失败"
             ];
         }
         //检查总表是否有这条
@@ -168,7 +174,8 @@ class ManageProductModel extends Model
                 . " ($productId,0,5,now(),now())";
             if ($this->execute($sql) === false) {
                 return [
-                    "result" => 1
+                    "result" => 1,
+                    "error" => "更新总表失败"
                 ];
             } else {
                 return [
@@ -180,7 +187,8 @@ class ManageProductModel extends Model
             $sql = "update productsummary set isdelete=0 where product=$productId";
             if ($this->execute($sql) === false) {
                 return [
-                    "result" => 1
+                    "result" => 1,
+                    "error" => "恢复到总表失败"
                 ];
             } else {
                 return [
@@ -201,7 +209,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productId = $args['productid'];
@@ -209,7 +218,8 @@ class ManageProductModel extends Model
         $sql = "update productdetail set isused=0 where productid = $productId";
         if ($this->execute($sql) === false) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "存档失败"
             ];
         }
 
@@ -217,7 +227,8 @@ class ManageProductModel extends Model
         $sql = "update productsummary set isdelete=1 where product=$productId";
         if ($this->execute($sql) === false) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "从总表删除失败"
             ];
         } else {
             return [
@@ -237,7 +248,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productId = $args['productid'];
@@ -245,7 +257,8 @@ class ManageProductModel extends Model
         $sql = "update productdetail set isdelete=1 where productid=$productId";
         if ($this->execute($sql) === false) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "删除失败"
             ];
         } else {
             return [
@@ -265,7 +278,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productId = $args['productid'];
@@ -276,6 +290,7 @@ class ManageProductModel extends Model
         if (!$result) {
             return [
                 "result" => 1,
+                "error" => "获取商品信息失败"
             ];
         } else {
             return [
@@ -296,7 +311,8 @@ class ManageProductModel extends Model
     {
         if (!$this->adminId) {//检查登录
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => "管理员未登录",
             ];
         }
         $productId = $args['productid'];
@@ -323,7 +339,8 @@ class ManageProductModel extends Model
             ];
         } else {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "保存失败"
             ];
         }
     }

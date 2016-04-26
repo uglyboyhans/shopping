@@ -62,7 +62,8 @@ class AccountModel extends Model
         $result = $this->query($sql);
         if ($result) {
             return [
-                "result" => 1
+                "result" => 2,
+                "error" => '用户名已存在'
             ];
         }
         $sql = "insert into memberaccount (account,password) values ('$account',password('$password'))";
@@ -72,7 +73,8 @@ class AccountModel extends Model
             ];
         } else {
             return [
-                "result" => 2
+                "result" => 1,
+                "error" => '注册失败',
             ];
         }
     }
@@ -93,14 +95,16 @@ class AccountModel extends Model
         $result = $this->query($sql);
         if (!$result) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "用户不存在"
             ];
         }
         $sql = "select userid from memberaccount where account = '$account' and password=password('$password')";
         $result = $this->query($sql);
         if (!$result) {
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '密码错误'
             ];
         } else {
             session('login', $result[0]['userid']);
@@ -126,14 +130,16 @@ class AccountModel extends Model
         $result = $this->query($sql);
         if (!$result) {
             return [
-                "result" => 1
+                "result" => 1,
+                "error" => "用户不存在"
             ];
         }
         $sql = "select adminid from adminaccount where adminaccount = '$account' and password=password('$password')";
         $result = $this->query($sql);
         if (!$result) {
             return [
-                "result" => 2
+                "result" => 2,
+                "error" => '密码错误'
             ];
         } else {
             session('adminLogin', $result[0]['adminid']);
