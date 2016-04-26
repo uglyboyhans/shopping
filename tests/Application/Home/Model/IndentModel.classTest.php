@@ -68,6 +68,7 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
         $args = [
             "productid" => 3,
             "count" => -2,
+            "address" => "地球",
         ];
         $this->assertEquals(0, $this->object->payForOne($args)['result']);
     }
@@ -80,7 +81,8 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
     public function testPayForCart()
     {
         $args = [
-            3, 6, 18
+            'cartid' => [3, 7, 18],
+            'address' => "火星",
         ];
         $this->assertEquals(0, $this->object->payForCart($args)['result']);
     }
@@ -92,7 +94,6 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
      */
     public function testViewIndent()
     {
-        // Remove the following lines when you implement this test.
         $this->assertGreaterThanOrEqual(0, $this->object->viewIndent()['count']);
     }
 
@@ -117,7 +118,8 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
     public function testApplyDrawback()
     {
         $args = [
-            "indentid" => 3
+            "indentid" => 3,
+            "reason" => '嫌弃',
         ];
         $this->assertEquals(0, $this->object->applyDrawback($args)['result']);
     }
@@ -143,13 +145,13 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
     public function testComment()
     {
         $args = [
-            "indentid" => 2,
+            "indentid" => 1,
             "content" => '单元测试',
             "score" => -222,
         ];
         $this->assertEquals(0, $this->object->comment($args)['result']);
         $args = [
-            "indentid" => 4,
+            "indentid" => 2,
             "score" => 3.3,
         ];
         $this->assertEquals(0, $this->object->comment($args)['result']);

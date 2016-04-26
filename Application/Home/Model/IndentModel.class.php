@@ -67,7 +67,7 @@ class IndentModel extends Model
             ];
         }
         $address = $args['address'];
-        if(!$address){
+        if (!$address) {
             return [
                 "result" => 1,
             ];
@@ -90,7 +90,7 @@ class IndentModel extends Model
          */
         //添加到订单：
         $sql = "insert into indent (user,product,count,total,address,updatetime)"
-            . " values ($this->userid,$productid,$count,$total,$address,now())";
+            . " values ($this->userid,$productid,$count,$total,'$address',now())";
         if ($this->execute($sql) !== false) {
             /**
              * @todo 添加通知
@@ -108,7 +108,7 @@ class IndentModel extends Model
     /**
      * 从购物车批量付款
      * 
-     * @param array $args 购物车id:[2,4,5]
+     * @param array $args 购物车id:[2,4,5]，地址
      * 
      * @return array
      */
@@ -122,18 +122,20 @@ class IndentModel extends Model
         $total = floatval(0); //总价
         $params = []; //添加到Indent的参数
         $cartids = '('; //in查询条件
-        foreach ($args as $key => $value) {
-            if (!$value) {
-                array_splice($args, $key, 1); //剔除空元素
-            }
-        }
-        $cartids = $cartids . implode(',', $args) . ')'; //拼接字符串
+        $cartid = $args['cartid']; //是个数组
         $address = $args['address'];
-        if(!$address){
+        if (!$address || !$cartid) {
             return [
                 "result" => 1,
+                "error" => "参数错误",
             ];
         }
+        foreach ($cartid as $key => $value) {
+            if (!$value) {
+                array_splice($cartid, $key, 1); //剔除空元素
+            }
+        }
+        $cartids = $cartids . implode(',', $cartid) . ')'; //拼接字符串
         //从cart里查出相关信息：
         //cart:c, productdetail:p
         $sql = "select c.count as count,c.product as productid,p.price as price"
@@ -163,7 +165,7 @@ class IndentModel extends Model
             $productid = $value['productid'];
             $oneTotal = floatval($value['total']);
             $sql = "insert into indent (user,product,count,total,address,updatetime)"
-                . " values ($this->userid,$productid,$count,$oneTotal,now())";
+                . " values ($this->userid,$productid,$count,$oneTotal,'$address',now())";
             if ($this->execute($sql) !== false) {
                 /**
                  * @todo 添加通知
@@ -247,7 +249,7 @@ class IndentModel extends Model
     /**
      * 申请退款
      * 
-     * @param array $args 订单id
+     * @param array $args 订单id,申请原因
      * 
      * @return array
      */
@@ -259,8 +261,10 @@ class IndentModel extends Model
             ];
         }
         $indentid = $args['indentid'];
+        $reason = $args['reason'] ? $args['reason'] : "";
         //insert到退款清单：
-        $sql = "insert into drawbacklist (indent) values ($indentid)";
+        $sql = "insert into drawbacklist (indent,reason) values"
+            . " ($indentid,'$reason')";
         if ($this->execute($sql) !== false) {
             //update订单状态
             $sql = "update indent set status=4,updatetime=now()"

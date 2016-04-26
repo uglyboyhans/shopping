@@ -66,7 +66,7 @@ class CartModel extends Model
                 "result" => 1
             ];
         }
-        $count = intval($args['count'])>=1?intval($args['count']):1;
+        $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
         $sql = "insert into cart (user,product,count)"
             . " values ($this->userid,$productid,$count)";
         if ($this->execute($sql) !== false) {
@@ -161,7 +161,7 @@ class CartModel extends Model
     /**
      * 从购物车付款(可批量)
      * 
-     * @param array $args 购物车id
+     * @param array $args 购物车id,地址
      * 
      * @return array
      */
@@ -176,8 +176,8 @@ class CartModel extends Model
         // 添加到订单（付款放在订单模块去做）:
         $cartids = $args['cartid'];
         if (is_array($cartids)) {//是数组，则批量
-            //从购物车批量付款并添加到订单:
-            if (0 !== D('Indent')->payForCart($cartids)['result']) {
+            //从购物车批量付款并添加到订单,直接传$args:
+            if (0 !== D('Indent')->payForCart($args)['result']) {
                 return [
                     "result" => 1
                 ];
@@ -190,6 +190,7 @@ class CartModel extends Model
                 $param = [
                     'productid' => $result[0]['product'],
                     'count' => $result[0]['count'],
+                    'address' => $args['address'],
                 ];
             } else {
                 return [
