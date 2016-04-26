@@ -83,8 +83,8 @@ class IndentModel extends Model
          * @todo 付款
          */
         //添加到订单：
-        $sql = "insert into indent (user,product,count,total)"
-            . " values ($this->userid,$productid,$count,$total)";
+        $sql = "insert into indent (user,product,count,total,updatetime)"
+            . " values ($this->userid,$productid,$count,$total,now())";
         if ($this->execute($sql) !== false) {
             /**
              * @todo 添加通知
@@ -150,8 +150,8 @@ class IndentModel extends Model
             $count = $value['count'];
             $productid = $value['productid'];
             $oneTotal = floatval($value['total']);
-            $sql = "insert into indent (user,product,count,total)"
-                . " values ($this->userid,$productid,$count,$oneTotal)";
+            $sql = "insert into indent (user,product,count,total,updatetime)"
+                . " values ($this->userid,$productid,$count,$oneTotal,now())";
             if ($this->execute($sql) !== false) {
                 /**
                  * @todo 添加通知
@@ -182,10 +182,11 @@ class IndentModel extends Model
         }
         //indent:i productdetail:p
         $sql = "select i.indentid,p.productname,p.price,i.count,i.total,"
-            . " i.status,p.cover,i.createtime"
+            . " i.status,p.cover,i.createtime,i.updatetime"
             . " from indent i left join productdetail p"
             . " on i.product=p.productid"
-            . " where i.user = $this->userid and i.isdelete=0";
+            . " where i.user = $this->userid and i.isdelete=0"
+            . " order by updatetime desc";
         $result = $this->query($sql);
         if (!$result) {
             return [
@@ -330,7 +331,7 @@ class IndentModel extends Model
                 . " ($product,$this->userid,'$content',$score)";
             if ($this->execute($sql) !== false) {
                 //更新indent状态
-                $sql = "update indent set status=2,updatetime=now()"
+                $sql = "update indent set status=3,updatetime=now()"
                     . " where indentid=$indentid";
                 if ($this->execute($sql) !== false) {
                     return [
