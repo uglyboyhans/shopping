@@ -69,6 +69,7 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
             "productid" => 3,
             "count" => -2,
             "address" => "地球",
+            "remark" => "白天寄送",
         ];
         $this->assertEquals(0, $this->object->payForOne($args)['result']);
     }
@@ -83,6 +84,7 @@ class IndentModelTest extends \PHPUnit_Framework_TestCase
         $args = [
             'cartid' => [3, 7, 18],
             'address' => "火星",
+            "remark" => "去死",
         ];
         $this->assertEquals(0, $this->object->payForCart($args)['result']);
     }

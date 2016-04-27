@@ -62,20 +62,15 @@ class IndentModel extends Model
             ];
         }
         $productid = $args['productid'];
-        if (!$productid) {
-            return [
-                "result" => 1,
-                "error" => "参数错误"
-            ];
-        }
         $address = $args['address'];
-        if (!$address) {
+        $remark = $args['remark'] ? $args['remark'] : '';
+        $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
+        if (!$productid || !$address) {
             return [
                 "result" => 1,
                 "error" => "参数错误"
             ];
         }
-        $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
         //查出价格
         $sql = "select price from productdetail where productid=$productid";
         $result = $this->query($sql);
@@ -93,8 +88,9 @@ class IndentModel extends Model
          * @todo 付款
          */
         //添加到订单：
-        $sql = "insert into indent (user,product,count,total,address,updatetime)"
-            . " values ($this->userid,$productid,$count,$total,'$address',now())";
+        $sql = "insert into indent"
+            . " (user,product,count,total,address,remark,updatetime) values"
+            . " ($this->userid,$productid,$count,$total,'$address','$remark',now())";
         if ($this->execute($sql) !== false) {
             /**
              * @todo 添加通知
@@ -130,6 +126,7 @@ class IndentModel extends Model
         $cartids = '('; //in查询条件
         $cartid = $args['cartid']; //是个数组
         $address = $args['address'];
+        $remark = $args['remark'] ? $args['remark'] : '';
         if (!$address || !$cartid) {
             return [
                 "result" => 1,
@@ -171,8 +168,9 @@ class IndentModel extends Model
             $count = $value['count'];
             $productid = $value['productid'];
             $oneTotal = floatval($value['total']);
-            $sql = "insert into indent (user,product,count,total,address,updatetime)"
-                . " values ($this->userid,$productid,$count,$oneTotal,'$address',now())";
+            $sql = "insert into indent"
+                . " (user,product,count,total,address,remark,updatetime) values"
+                . " ($this->userid,$productid,$count,$oneTotal,'$address','$remark',now())";
             if ($this->execute($sql) !== false) {
                 /**
                  * @todo 添加通知
