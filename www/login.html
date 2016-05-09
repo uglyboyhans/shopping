@@ -1,0 +1,72 @@
+
+<!--弹出登录对话框-->
+<div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">登录</h4>
+        </div>
+        <div class="modal-body">
+            <form id="loginInfo">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="icon-user"></i></span>
+                    <input type="text" name="account" class="form-control" placeholder="用户名">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon fix-border"><i class="icon-key"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="密码">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="login_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="login_submit" class="btn btn-primary">登录</button>
+        </div>
+    </div>
+</div>
+<!--end弹出登录对话框-->
+
+<script>
+    //每次调用都会加载一次html所以不用清空输入框
+    
+    //登录提交:
+    $("#login_submit").click(function () {
+        var params = $("#loginInfo").serialize();
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: "http://www.shopping.com/index.php?m=Account&f=login",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result == 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>登录成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.href = "index.html";
+                } else if (result.result == 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>账号不存在', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result == 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>登录失败或密码错误', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                alert('wrong');
+            },
+        });
+    });
+
+</script>

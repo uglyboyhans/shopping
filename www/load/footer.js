@@ -1,0 +1,1 @@
+$('footer').html('<hr /><p style="text-align:center">版权所有：<a href="http://cqu.edu.cn">cqu.edu.cn</a></p>');

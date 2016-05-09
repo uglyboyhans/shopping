@@ -1,0 +1,58 @@
+<!--row-->
+<div class="row">
+    <!--搜索框-->
+    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="icon-search"></i></span>
+            <input name="" type="text" placeholder="商品名称..." class="form-control">
+            <span class="input-group-btn">
+                <button id="searchProduct" class="btn btn-default" type="button">搜索</button>
+            </span>
+        </div>
+    </div>
+    <!--end搜索框-->
+
+    <!--链接列表-->
+    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+        <ul class="nav nav-pills nav-justified">
+            <li><a title="go_myShop" href="#"><img src="src/icon/default.png" width="30" height="30" class="img-circle" alt="我的shop"></a></li>
+            <li class="active"><a title="go_index" href="###">首页</a></li>
+            <li><a title="go_logout" href="#">退出</a></li>
+        </ul>
+    </div>
+    <!--end链接列表-->
+
+</div>
+<!--end row-->
+
+
+<!--js-->
+<!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+<script src="lib/jquery/jquery.js" type="text/javascript"></script>
+<!-- ZUI Javascript组件 -->
+<script src="js/zui.min.js"></script>
+<script>
+    $("[title='go_index']").click(function () {
+        window.parent.location.href = "index.html";
+    });
+    $("[title='go_logout']").click(function () {
+        $('.active').removeClass('active');
+        $(this).parent().addClass('active');
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: "http://www.shopping.com/index.php?m=Account&f=logout",
+            dataType: 'json',
+            success: function () {
+                window.parent.location.href = 'index.html';
+            },
+            error: function () {
+                alert('wrong');
+            },
+        });
+
+    });
+    $("#searchProduct").click(function () {
+    });
+</script>
+

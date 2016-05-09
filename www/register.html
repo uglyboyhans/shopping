@@ -1,0 +1,92 @@
+<!--弹出注册对话框-->
+<div class="modal-dialog modal-sm">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">注册</h4>
+        </div>
+        <div class="modal-body">
+            <form id="registerInfo">
+                <div class="input-group">
+                    <span class="input-group-addon"><i class="icon-user"></i></span>
+                    <input type="text" id="account" name="account" class="form-control" placeholder="用户名">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon fix-border"><i class="icon-key"></i></span>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="密码(8-16位)">
+                </div>
+                <div class="input-group">
+                    <span class="input-group-addon fix-border"><i class="icon-key"></i></span>
+                    <input type="password" id="re_password" name="re_password" class="form-control" placeholder="重复密码">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="register_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="register_submit" class="btn btn-primary">注册</button>
+        </div>
+    </div>
+</div>
+<!--end弹出登录对话框-->
+
+<script>
+    //每次调用都会加载一次html所以不用清空输入框
+
+    //注册提交:
+    $("#register_submit").click(function () {
+        //检查密码规范:
+        if ($('#password').val() !== $('#re_password').val()) {
+            var msg = new $.zui.Messager('<i class="icon-exclamation-sign"></i>两次密码不一致', {
+                placement: 'center',
+                type: 'danger'
+            });
+            msg.show();
+            return false;
+        }
+        if ($('#password').val().length > 16 || $('#password').val().length < 8) {
+            var msg = new $.zui.Messager(
+                    '<i class="icon-exclamation-sign"></i>密码长度只能在8-16位', {
+                        placement: 'center',
+                        type: 'danger'
+                    });
+            msg.show();
+            return false;
+        }
+        var params = $("#registerInfo").serialize();
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: "http://www.shopping.com/index.php?m=Account&f=register",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result == 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>注册成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.href = "index.html";
+                } else if (result.result == 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>注册失败，请重试', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result == 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户名已存在', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                alert('wrong');
+            },
+        });
+    });
+</script>

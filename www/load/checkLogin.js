@@ -1,0 +1,46 @@
+$.ajax({
+    type: 'GET',
+    crossDomain: true,
+    url: "http://www.shopping.com/index.php?m=Account&f=isLogin",
+    dataType: 'json',
+    success: function (result) {
+        if (result.result == 0) {//会员已登录
+            $.ajax({//插入top
+                url: "top_member.html",
+                cache: false,
+                success: function (html) {
+                    $("#top").replaceWith(html);
+                }
+            });
+            $.ajax({//插入left
+                url: "left_member.html",
+                cache: false,
+                success: function (html) {
+                    $("#left").replaceWith(html);
+                }
+            });
+        }
+        if (result.result == 1) {//未登录
+            $.ajax({//插入top
+                url: "top_tourist.html",
+                cache: false,
+                success: function (html) {
+                    $("#top").replaceWith(html);
+                }
+            });
+            $.ajax({//插入left
+                url: "left_tourist.html",
+                cache: false,
+                success: function (html) {
+                    $("#left").replaceWith(html);
+                }
+            });
+        }
+        if (result.result == 2) {//管理员已登录
+
+        }
+    },
+    error: function () {
+        alert('wrong');
+    },
+});
