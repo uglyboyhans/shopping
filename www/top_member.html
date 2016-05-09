@@ -25,16 +25,13 @@
 </div>
 <!--end row-->
 
-
-<!--js-->
-<!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
-<script src="lib/jquery/jquery.js" type="text/javascript"></script>
-<!-- ZUI Javascript组件 -->
-<script src="js/zui.min.js"></script>
 <script>
+    //点击去首页
     $("[title='go_index']").click(function () {
         window.parent.location.href = "index.html";
     });
+    
+    //点击退出
     $("[title='go_logout']").click(function () {
         $('.active').removeClass('active');
         $(this).parent().addClass('active');
@@ -52,6 +49,8 @@
         });
 
     });
+    
+    //搜索
     $("#searchProduct").click(function () {
     });
 </script>
