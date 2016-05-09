@@ -1,16 +1,56 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>top_admin</div>
-    </body>
-</html>
+<!--row-->
+<div class="row">
+    <!--搜索框-->
+    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="icon-search"></i></span>
+            <input name="" type="text" placeholder="商品名称..." class="form-control">
+            <span class="input-group-btn">
+                <button id="searchProduct" class="btn btn-default" type="button">搜索</button>
+            </span>
+        </div>
+    </div>
+    <!--end搜索框-->
+
+    <!--链接列表-->
+    <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+        <ul class="nav nav-pills nav-justified">
+            <li><a title="go_myShop" href="#"><img src="src/icon/default.png" width="30" height="30" class="img-circle" alt="我的shop"></a></li>
+            <li class="active"><a title="go_index" href="###">首页</a></li>
+            <li><a title="go_logout" href="#">退出</a></li>
+        </ul>
+    </div>
+    <!--end链接列表-->
+
+</div>
+<!--end row-->
+
+<script>
+    //点击去首页
+    $("[title='go_index']").click(function () {
+        window.parent.location.href = "index.html";
+    });
+    
+    //点击退出
+    $("[title='go_logout']").click(function () {
+        $('.active').removeClass('active');
+        $(this).parent().addClass('active');
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: "http://www.shopping.com/index.php?m=Account&f=logout",
+            dataType: 'json',
+            success: function () {
+                window.parent.location.href = 'index.html';
+            },
+            error: function () {
+                alert('wrong');
+            },
+        });
+
+    });
+    
+    //搜索，调用manageProduct模块
+    $("#searchProduct").click(function () {
+    });
+</script>
