@@ -71,7 +71,7 @@ class UserModel extends Model
         $email = $args['email'] ? $args['email'] : "";
         $birthdate = $args['birthdate'] ? $args['birthdate'] : "";
         $phonenumber = $args['phonenumber'] ? $args['phonenumber'] : "";
-        $gender = $args['gender'] ? $args['gender'] : 2;
+        $gender = intval($args['gender']) >= 0 ? intval($args['gender']) : 2;
         if ($gender !== 0 && $gender !== 1 & $gender !== 2) {
             $gender = 2;
         }
@@ -152,9 +152,10 @@ class UserModel extends Model
             . " where user=$this->userid";
         $result = $this->query($sql);
         if ($result) {
+            $result[0]['birthdate'] = date("Y-m-d", strtotime($result[0]['birthdate']));
             return [
                 "result" => 0,
-                "address" => $result,
+                "userinfo" => $result,
             ];
         } else {
             return [

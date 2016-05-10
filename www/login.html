@@ -28,7 +28,7 @@
 
 <script>
     //每次调用都会加载一次html所以不用清空输入框
-    
+
     //登录提交:
     $("#login_submit").click(function () {
         var params = $("#loginInfo").serialize();
@@ -64,7 +64,12 @@
                 }
             },
             error: function () {
-                alert('wrong');
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
             },
         });
     });
