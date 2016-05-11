@@ -15,7 +15,7 @@
     <!--链接列表-->
     <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
         <ul class="nav nav-pills nav-justified">
-            <li><a title="go_userInfo" href="userInfo.html"><img src="src/icon/default.png" width="31" height="31" class="img-circle" alt="个人中心"></a></li>
+            <li><a title="go_userInfo" href="userInfo.html"><img id="top_icon" src="src/icon/default.png" width="31" height="31" class="img-circle" alt="个人中心"></a></li>
             <li class="active"><a title="go_index" href="###">首页</a></li>
             <li><a title="go_logout" href="#">退出</a></li>
         </ul>
@@ -26,11 +26,51 @@
 <!--end row-->
 
 <script>
+    //获取头像放到顶部
+    $(document).ready(function () {
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: 'http://www.shopping.com/index.php?m=User&f=getUserInfo',
+            dataType: 'json',
+            success: function (result) {
+                if (result.result == 0) {
+                    var userInfo = result.userinfo[0];
+                    if (userInfo.icon.length > 0) {
+                        $("#top_icon").attr("src", userInfo.icon);
+                    }
+                } else if (result.result == 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>获取信息失败', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result == 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录！', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+
     //点击去首页
     $("[title='go_index']").click(function () {
         window.parent.location.href = "index.html";
     });
-    
+
     //点击退出
     $("[title='go_logout']").click(function () {
         $('.active').removeClass('active');
@@ -49,7 +89,7 @@
         });
 
     });
-    
+
     //搜索
     $("#searchProduct").click(function () {
     });

@@ -89,11 +89,14 @@ class UserModel extends Model
             . " address2 = '$address2',"
             . " address3 = '$address3',"
             . " address4 = '$address4',"
-            . " icon = '$icon',"
             . " email = '$email',"
             . " birthdate = '$birthdate',"
             . " phonenumber = '$phonenumber',"
             . " gender = $gender";
+        if ($icon !== "") {
+            $sql = $sql . " ,icon = '$icon'";
+        }
+
         if ($this->execute($sql) !== false) {
             return [
                 "result" => 0
