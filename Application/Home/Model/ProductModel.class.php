@@ -83,6 +83,8 @@ class ProductModel extends Model
                 'result' => 0,
                 'count' => count($result),
                 'product' => $result,
+                'pageindex' => $pageIndex,
+                'pagesize' => $pageSize,
             ];
         } else {
             return[

@@ -4,7 +4,7 @@
     <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
         <div class="input-group">
             <span class="input-group-addon"><i class="icon-search"></i></span>
-            <input name="" type="text" placeholder="商品名称..." class="form-control">
+            <input id="productname" type="text" placeholder="商品名称..." class="form-control">
             <span class="input-group-btn">
                 <button id="searchProduct" class="btn btn-default" type="button">搜索</button>
             </span>
@@ -60,5 +60,6 @@
     });
 
     $("#searchProduct").click(function () {
+        window.location.href = "searchProduct.html?productname=" + $("#productname").val();
     });
 </script>
