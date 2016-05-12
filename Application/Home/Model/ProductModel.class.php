@@ -116,6 +116,7 @@ class ProductModel extends Model
                 "error" => "获取商品信息失败"
             ];
         } else {
+            $result[0]['content'] = htmlspecialchars_decode($result[0]['content']);
             return [
                 "result" => 0,
                 "product" => $result[0],

@@ -167,7 +167,7 @@
                     dataType: 'json',
                     success: function (result) {
                         if (result.result == 0) {
-                            var userInfo = result.userinfo[0];
+                            var userInfo = result.userinfo;
                             $("#realname").val(userInfo.realname);
                             $("#idcard").val(userInfo.idcard);
                             $("#birthdate").val(userInfo.birthdate);

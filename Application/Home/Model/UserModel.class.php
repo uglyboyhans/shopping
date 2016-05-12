@@ -158,7 +158,7 @@ class UserModel extends Model
             $result[0]['birthdate'] = date("Y-m-d", strtotime($result[0]['birthdate']));
             return [
                 "result" => 0,
-                "userinfo" => $result,
+                "userinfo" => $result[0],
             ];
         } else {
             return [

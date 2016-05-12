@@ -35,7 +35,7 @@
             dataType: 'json',
             success: function (result) {
                 if (result.result == 0) {
-                    var userInfo = result.userinfo[0];
+                    var userInfo = result.userinfo;
                     if (userInfo.icon.length > 0) {
                         $("#top_icon").attr("src", userInfo.icon);
                     }
