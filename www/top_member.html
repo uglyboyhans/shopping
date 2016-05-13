@@ -81,7 +81,7 @@
             url: "http://www.shopping.com/index.php?m=Account&f=logout",
             dataType: 'json',
             success: function () {
-                window.parent.location.href = 'index.html';
+                window.location.reload();
             },
             error: function () {
                 alert('wrong');

@@ -39,10 +39,10 @@
             type: 'ajax',
             keyboard: false,
             remote: 'login.html',
-            moveable: true
+            backdrop: false
         };
-        var myModalTrigger = new $.zui.ModalTrigger(options);
-        myModalTrigger.show();
+        var loginModalTrigger = new $.zui.ModalTrigger(options);
+        loginModalTrigger.show();
     });
 
     //打开注册对话框
@@ -53,7 +53,7 @@
             type: 'ajax',
             keyboard: false,
             remote: 'register.html',
-            moveable: true
+            backdrop: false
         };
         var myModalTrigger = new $.zui.ModalTrigger(options);
         myModalTrigger.show();

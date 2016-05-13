@@ -20,6 +20,9 @@
                     <input type="password" id="re_password" name="re_password" class="form-control" placeholder="重复密码">
                 </div>
             </form>
+            <div>
+                <button type="button" id="login" class="btn btn-default">已有账号，请登录 >></button>
+            </div>
         </div>
         <div class="modal-footer">
             <button type="button" id="register_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -27,7 +30,7 @@
         </div>
     </div>
 </div>
-<!--end弹出登录对话框-->
+<!--end弹出注册对话框-->
 
 <script>
     //每次调用都会加载一次html所以不用清空输入框
@@ -88,5 +91,17 @@
                 alert('wrong');
             },
         });
+    });
+
+    //打开登录对话框
+    $("#login").click(function () {
+        var options = {
+            type: 'ajax',
+            keyboard: false,
+            remote: 'login.html',
+            backdrop: false
+        };
+        var loginModalTrigger = new $.zui.ModalTrigger(options);
+        loginModalTrigger.show();
     });
 </script>
