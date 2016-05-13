@@ -211,7 +211,7 @@
                 $.ajax({
                     type: 'POST',
                     crossDomain: true,
-                    url: 'http://www.shopping.com/index.php?m=User&f=editUserInfo',
+                    url: serverUrl() + '/index.php?m=User&f=editUserInfo',
                     //data: params,
                     data: new FormData($("#frmInfo")[0]),
                     dataType: 'json',

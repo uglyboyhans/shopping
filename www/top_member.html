@@ -31,7 +31,7 @@
         $.ajax({
             type: 'GET',
             crossDomain: true,
-            url: 'http://www.shopping.com/index.php?m=User&f=getUserInfo',
+            url: serverUrl() + '/index.php?m=User&f=getUserInfo',
             dataType: 'json',
             success: function (result) {
                 if (result.result == 0) {

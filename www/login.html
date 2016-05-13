@@ -37,7 +37,7 @@
         $.ajax({
             type: 'POST',
             crossDomain: true,
-            url: "http://www.shopping.com/index.php?m=Account&f=login",
+            url: serverUrl() + "/index.php?m=Account&f=login",
             data: params,
             dataType: 'json',
             success: function (result) {
