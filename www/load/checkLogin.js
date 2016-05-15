@@ -2,7 +2,7 @@
 $.ajax({
     type: 'GET',
     crossDomain: true,
-    url: "http://www.shopping.com/index.php?m=Account&f=isLogin",
+    url: serverUrl() + "/index.php?m=Account&f=isLogin",
     dataType: 'json',
     success: function (result) {
         if (result.result == 0) {//会员已登录
@@ -55,6 +55,25 @@ $.ajax({
         }
     },
     error: function () {
-        alert('wrong');
-    },
+        alert('网络错误');
+    }
 });
+
+//检查登录状态并返回结果代码
+function checkLogin() {
+    var result;
+    $.ajax({
+        type: 'GET',
+        crossDomain: true,
+        url: serverUrl() + "/index.php?m=Account&f=isLogin",
+        dataType: 'json',
+        async: false,//关闭异步！！
+        success: function (data) {
+            result = data.result;
+        },
+        error: function () {
+            alert('网络错误');
+        }
+    });
+    return result;
+}
