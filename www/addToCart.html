@@ -1,0 +1,124 @@
+<!--弹出购买对话框-->
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">添加到购物车</h4>
+        </div>
+        <div class="modal-body">
+            <form id="addToCartInfo" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label id="thisname" class="text-info col-md-2">...</label>
+                    <label class="text-danger col-md-2">单价:</label>
+                    <label id="thisprice" class="text-danger col-md-2">...</label>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">购买数量:</label>
+                    <div class="col-md-2">
+                        <input type="text" id="count" name="count" class="form-control" placeholder="数量" value="1" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="text-warning col-md-2">总价:</label>
+                    <label id="thistotal" class="text-warning col-md-6">...</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="addToCart_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="addToCart_submit" class="btn btn-danger">添加到购物车</button>
+        </div>
+    </div>
+</div>
+<!--end弹出购买对话框-->
+
+<script>
+    $(document).ready(function () {
+        //读取商品详情:
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: serverUrl() + '/index.php?m=Product&f=productDetail&productid=' + productid,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var product = result.product;
+                    $("#thisname").text(product.productname);
+                    $("#thisprice").text(product.price);
+                    $("#thistotal").text(product.price);
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>获取信息失败', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+
+    //数量改变事件:
+    $("#count").keyup(function () {
+        if (parseInt($("#count").val()) < 1) {
+            $("#count").val(1);
+        }
+        $("#thistotal").text(parseFloat($("#thisprice").text()) * parseInt($("#count").val()));
+    });
+
+    //提交:
+    $("#addToCart_submit").click(function () {
+        var params = $("#addToCartInfo").serialize();
+        params += "&productid=" + productid;
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: serverUrl() + "/index.php?m=Cart&f=addToCart",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>添加成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.reload();
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result === 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+</script>

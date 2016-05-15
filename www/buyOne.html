@@ -153,7 +153,10 @@
     });
 
     //数量改变事件:
-    $("#count").change(function () {
+    $("#count").keyup(function () {
+        if (parseInt($("#count").val()) < 1) {
+            $("#count").val(1);
+        }
         $("#thistotal").text(parseFloat($("#thisprice").text()) * parseInt($("#count").val()));
     });
 
@@ -192,7 +195,7 @@
         //将名字和电话号贴在地址里然后提交:
         $("#address").val($("#address").val() + " " + $("#realname").val() + "(收)" + " 电话:" + $("#phonenumber").val());
         var params = $("#buyOneInfo").serialize();
-        params +="&productid="+productid;
+        params += "&productid=" + productid;
         $.ajax({
             type: 'POST',
             crossDomain: true,
