@@ -132,13 +132,15 @@
                                         placement: 'center',
                                         type: 'danger'
                                     });
+                            searching.hide();
                             msg.show();
-                        } else if (result.result === 1) {
+                        } else if (result.result === 2) {
                             var msg = new $.zui.Messager(
                                     '<i class="icon-exclamation-sign"></i>' + result.error, {
                                         placement: 'center',
                                         type: 'danger'
                                     });
+                            searching.hide();
                             msg.show();
                         }
                     },
