@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div>
+            <form id="frmInfo">
+                <label>账号<input type="text" name="account" value="admin1" /></label><br />
+                <label>密码<input type="password" name="password" value="admin1" /></label><br />
+                <button id="button" type="button">submit</button>
+            </form>
+        </div>
+        <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+        <script src="lib/jquery/jquery.js" type="text/javascript"></script>
+        <!-- ZUI Javascript组件 -->
+        <script src="js/zui.min.js"></script>
+        <script>
+            $("#button").click(function () {
+                var params = $("#frmInfo").serialize();
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: "http://www.shopping.com/index.php?m=Account&f=adminLogin",
+                    data: params,
+                    dataType: 'json',
+                    success: function (result) {
+                        console.log(result.result);
+                        window.location.href = 'index.html';
+                    },
+                    error: function () {
+                        alert('wrong');
+                    },
+                });
+            });
+        </script>
+    </body>
+</html>
