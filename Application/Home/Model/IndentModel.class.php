@@ -72,7 +72,7 @@ class IndentModel extends Model
             ];
         }
         //查出价格
-        $sql = "select price from productdetail where productid=$productid";
+        $sql = "select price from productdetail where productid=$productid and isused=1";
         $result = $this->query($sql);
         if (!$result) {
             return [

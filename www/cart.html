@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>我的购物车</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- zui -->
+        <link href="css/zui.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!--row-->
+        <div class="row">
+
+            <!--Top-->
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div id="top"></div>
+            </div>
+            <!--end Top-->
+
+            <!--Left-->
+            <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                <div id="left"></div>
+            </div>
+            <!--end Left-->
+
+            <!--main-->
+            <div id="main" class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                <!--轮播小广告-->
+                <!--缺广告-->
+                <!--缺广告-->
+                <!--缺广告-->
+                <!--end轮播小广告-->
+
+                <div class="list">
+                    <header>
+                        <h3><i class="icon-list-ul icon-border-circle"></i> 购物车 &nbsp;<small><span id="count">0</span> 件商品</small></h3>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <input type="checkbox" id="selectAll" />
+                            </span>
+                            <button class="btn btn-danger" id="batchDeleteCart">批量删除</button>
+                            <button class="btn btn-warning" id="batchBuyCart">批量付款</button>
+                        </div>
+                    </header>
+                    <form class="items items-hover" id="cartList">
+
+                    </form>
+
+                </div>
+            </div>
+            <!--end main-->
+
+        </div>
+        <!--end row-->
+
+        <!--footer-->
+        <footer>
+        </footer>
+        <!--end footer-->
+
+        <!--js-->
+        <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+        <script src="lib/jquery/jquery.js" type="text/javascript"></script>
+        <!-- ZUI Javascript组件 -->
+        <script src="js/zui.min.js"></script>
+        <script src="load/urlconfig.js" type="text/javascript"></script>
+        <script src="load/footer.js" type="text/javascript"></script>
+        <script src="load/checkLogin.js" type="text/javascript"></script>
+
+        <script>
+            var productid;//单独购买时的商品id
+
+            $(document).ready(function () {
+                //获取cart信息:
+                //提示正在获取购物车信息
+                var searching = new $.zui.Messager(
+                        '<i class="icon-ok-sign"></i>正在获取购物车信息。。。', {
+                            placement: 'center',
+                            type: 'success',
+                            time: 0//搜索完毕之前都不隐藏
+                        });
+                searching.show();
+
+                $.ajax({
+                    type: 'GET',
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=Cart&f=viewCart',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            $('#count').text(result.count);
+                            for (var i in result.cart) {
+                                var cart = result.cart[i];
+                                if (!cart.cover) {
+                                    cart.cover = "src/icon/default.png";
+                                }
+                                $("#cartList").append(
+                                        '<div class="item">\n\
+                            <div class="item-content row">\n\
+                                <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">\n\
+                                    <input class="pull-right" type="checkbox" name="cartid[]" value="' + cart.cartid + '" />\n\
+                                </div>\n\
+                                <div class="col-lg-1 col-md-1 col-xs-1 col-sm-1">\n\
+                                    <img src="' + cart.cover + '" alt="cover" />\n\
+                                </div>\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <a href="productDetail.html?productid=' + cart.product + '">' + cart.productname + '</a>\n\
+                                </div>\n\
+                                <div class="text col-lg-4 col-md-4 col-xs-4 col-sm-4">\n\
+                                    <div>\n\
+                                        <label class="text-danger">单价:</label>\n\
+                                        <label class="text-danger">' + cart.price + '</label>\n\
+                                    </div>\n\
+                                    <div>\n\
+                                        <label class="text-warning">数量:</label>\n\
+                                        <label class="text-warning">' + cart.count + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 pull-right">\n\
+                                    <button class="btn btn-danger delete" value="' + cart.cartid + '">删除</button><br/><br />\n\
+                                    <button class="btn btn-warning pay" value="' + cart.product + '">单独购买</button>\n\
+                                </div>\n\
+                            </div>\n\
+                        </div>'
+                                        );
+                            }
+
+                            searching.hide();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            });
+
+            $("#cartList").on('click', '.pay', function () {
+                productid = this.value;
+                var remote;
+                if (0 === checkLogin()) {
+                    remote = 'buyOne.html';
+                } else {
+                    remote = 'login.html';
+                }
+                var options = {
+                    type: 'ajax',
+                    keyboard: false,
+                    remote: remote,
+                };
+                var ModalTrigger = new $.zui.ModalTrigger(options);
+                ModalTrigger.show();
+            });
+
+            $("#cartList").on('click', '.delete', function () {
+                var cartid = this.value;
+                var r = confirm("确定要删除？");
+                if (r === true) {
+                    $.ajax({
+                        type: 'POST',
+                        data: 'cartid=' + cartid,
+                        crossDomain: true,
+                        url: serverUrl() + '/index.php?m=Cart&f=delete',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.result === 0) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-ok-sign"></i>删除成功', {
+                                            placement: 'center',
+                                            type: 'success'
+                                        });
+                                msg.show();
+                                window.location.reload();
+                            } else if (result.result === 1) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                            placement: 'center',
+                                            type: 'danger'
+                                        });
+                                msg.show();
+                            } else if (result.result === 2) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-warning-sign"></i>用户未登录', {
+                                            placement: 'center',
+                                            type: 'warning'
+                                        });
+                                msg.show();
+                            }
+                        },
+                        error: function () {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        },
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+            $("#batchDeleteCart").click(function () {
+                var param = $("#cartList").serialize();
+                if (!param) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>请选择要删除的项！', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                    return false;
+                }
+                var r = confirm("确定要删除？");
+                if (r === true) {
+                    $.ajax({
+                        type: 'POST',
+                        data: param,
+                        crossDomain: true,
+                        url: serverUrl() + '/index.php?m=Cart&f=delete',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.result === 0) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-ok-sign"></i>删除成功', {
+                                            placement: 'center',
+                                            type: 'success'
+                                        });
+                                msg.show();
+                                window.location.reload();
+                            } else if (result.result === 1) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                            placement: 'center',
+                                            type: 'danger'
+                                        });
+                                msg.show();
+                            } else if (result.result === 2) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-warning-sign"></i>用户未登录', {
+                                            placement: 'center',
+                                            type: 'warning'
+                                        });
+                                msg.show();
+                            }
+                        },
+                        error: function () {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        },
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+            //全选
+            $(document).on("click", "#selectAll", function () {
+                $("[name='cartid[]']").prop("checked", this.checked);
+            });
+
+            //批量付款
+            $("#batchBuyCart").click(function () {
+                var cartids = $("#cartList").serialize();
+                if (!cartids) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>请选择要付款的项！', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                    return false;
+                }
+                var remote;
+                if (0 === checkLogin()) {
+                    remote = 'batchBuyCart.html';
+                } else {
+                    remote = 'login.html';
+                }
+                var options = {
+                    type: 'ajax',
+                    keyboard: false,
+                    remote: remote,
+                };
+                var ModalTrigger = new $.zui.ModalTrigger(options);
+                ModalTrigger.show();
+            });
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,189 @@
+<!--弹出批量付款对话框-->
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">批量付款</h4>
+        </div>
+        <div class="modal-body">
+            <form id="batchBuyInfo" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">选择常用地址:</label>
+                    <div class="col-md-6">
+                        <select class="form-control" id="selectAddress"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">收货地址:</label>
+                    <div class="input-group col-md-10">
+                        <textarea name='address' id='address' rows='1' class='form-control' placeholder="可以在个人信息中添加最多4个常用收货地址，方便快捷选择..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">姓名:</label>
+                    <div class="col-md-2">
+                        <input type="text" id="realname" name="realname" class="form-control" placeholder="姓名:" value="1" />
+                    </div>
+                    <label class="col-md-2 control-label">电话:</label>
+                    <div class="col-md-2">
+                        <input type="text" id="phonenumber" name="phonenumber" class="form-control" placeholder="电话:" value="1" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-2 control-label">备注:</label>
+                    <div class="input-group col-md-10">
+                        <textarea name='remark' id='remark' rows='1' class='form-control' placeholder="可以说明想要的型号、颜色、送货时间等..."></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="batchBuy_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="batchBuy_submit" class="btn btn-danger">确认付款</button>
+        </div>
+    </div>
+</div>
+<!--end弹出批量付款对话框-->
+<script>
+    $(document).ready(function () {
+        //获取userinfo里的姓名电话地址:
+        $.ajax({
+            type: 'GET',
+            crossDomain: true,
+            url: serverUrl() + '/index.php?m=User&f=getUserInfo',
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var userInfo = result.userinfo;
+                    //填充名字、电话:
+                    $("#realname").val(userInfo.realname);
+                    $("#phonenumber").val(userInfo.phonenumber);
+                    //填充地址:
+                    if (userInfo.address1 !== "") {
+                        $("#selectAddress").append('\n\
+                        <option value="' + userInfo.address1 + '">' + userInfo.address1 + '</option>\n\
+                        ');
+                    }
+                    if (userInfo.address2 !== "") {
+                        $("#selectAddress").append('\n\
+                        <option value="' + userInfo.address2 + '">' + userInfo.address2 + '</option>\n\
+                        ');
+                    }
+                    if (userInfo.address3 !== "") {
+                        $("#selectAddress").append('\n\
+                        <option value="' + userInfo.address3 + '">' + userInfo.address3 + '</option>\n\
+                        ');
+                    }
+                    if (userInfo.address4 !== "") {
+                        $("#selectAddress").append('\n\
+                        <option value="' + userInfo.address4 + '">' + userInfo.address4 + '</option>\n\
+                        ');
+                    }
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>获取信息失败', {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result === 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录！', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+
+    //选择地址事件:
+    $("#selectAddress").change(function () {
+        $("#address").val($("#selectAddress").val());
+    });
+
+    //提交订单:
+    $("#batchBuy_submit").click(function () {
+        //检查入参不为空
+        if ($("#address").val() === "") {
+            var msg = new $.zui.Messager('<i class="icon-exclamation-sign"></i>必须输入/选择地址', {
+                placement: 'center',
+                type: 'danger'
+            });
+            msg.show();
+            return false;
+        }
+        if ($("#realname").val() === "") {
+            var msg = new $.zui.Messager('<i class="icon-exclamation-sign"></i>必须输入收货人姓名', {
+                placement: 'center',
+                type: 'danger'
+            });
+            msg.show();
+            return false;
+        }
+        if ($("#phonenumber").val() === "") {
+            var msg = new $.zui.Messager('<i class="icon-exclamation-sign"></i>必须输入收货人电话', {
+                placement: 'center',
+                type: 'danger'
+            });
+            msg.show();
+            return false;
+        }
+        //将名字和电话号贴在地址里然后提交:
+        $("#address").val($("#address").val() + " " + $("#realname").val() + "(收)" + " 电话:" + $("#phonenumber").val());
+        var params = $("#batchBuyInfo").serialize() + "&" + $("#cartList").serialize();
+        console.log(params);
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: serverUrl() + "/index.php?m=Cart&f=payFromCart",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>购买成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.reload();
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result === 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+</script>
