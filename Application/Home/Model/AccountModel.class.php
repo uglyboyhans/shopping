@@ -181,7 +181,7 @@ class AccountModel extends Model
     {
         session(null);
         return [
-            "result " => 0
+            "result" => 0
         ];
     }
 
