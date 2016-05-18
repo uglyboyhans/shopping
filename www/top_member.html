@@ -80,8 +80,10 @@
             crossDomain: true,
             url: "http://www.shopping.com/index.php?m=Account&f=logout",
             dataType: 'json',
-            success: function () {
-                window.location.reload();
+            success: function (result) {
+                if (result.result === 0) {
+                    window.location.reload();
+                }
             },
             error: function () {
                 alert('wrong');
