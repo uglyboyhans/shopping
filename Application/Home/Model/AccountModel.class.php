@@ -123,6 +123,7 @@ class AccountModel extends Model
      */
     public function adminLogin($args)
     {
+        session(null); //先清空session
         $account = $args['account'];
         $password = $args['password'];
         //先检查用户是否存在
