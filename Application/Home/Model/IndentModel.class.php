@@ -216,7 +216,7 @@ class IndentModel extends Model
             ];
         } else {
             return [
-                "rusult" => 0,
+                "result" => 0,
                 "count" => count($result),
                 "indent" => $result,
             ];

@@ -1,0 +1,81 @@
+<!--弹出申请退款对话框-->
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">申请退款</h4>
+        </div>
+        <div class="modal-body">
+            <form id="drawbackInfo" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">申请原因:</label>
+                    <div class="input-group col-md-10">
+                        <textarea name='reason' id='reason' rows='1' class='form-control' placeholder="申请退款的原因：如质量问题、尺码不对..."></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="drawback_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="drawback_submit" class="btn btn-danger">确认申请</button>
+        </div>
+    </div>
+</div>
+<!--end弹出申请退款对话框-->
+<script>
+    //提交申请:
+    $("#drawback_submit").click(function () {
+        //检查入参不为空
+        if ($("#reason").val() === "") {
+            var msg = new $.zui.Messager('<i class="icon-exclamation-sign"></i>必须输入申请原因', {
+                placement: 'center',
+                type: 'danger'
+            });
+            msg.show();
+            return false;
+        }
+        
+        var params = $("#drawbackInfo").serialize();
+        params += "&indentid=" + indentid;
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: serverUrl() + "/index.php?m=Indent&f=applyDrawback",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>申请成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.reload();
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result === 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+</script>
