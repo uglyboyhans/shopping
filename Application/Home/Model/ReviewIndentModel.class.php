@@ -75,7 +75,7 @@ class ReviewIndentModel extends Model
             ];
         } else {
             return [
-                "rusult" => 0,
+                "result" => 0,
                 "count" => count($result),
                 "indentreviewlist" => $result,
             ];
@@ -133,7 +133,7 @@ class ReviewIndentModel extends Model
             ];
         }
         //indentreviewlist:r | productdetail:p | indent:i
-        $sql = "select r.reviewid,r.indent,r.status,"
+        $sql = "select r.reviewid,r.indent,r.status,i.address,"
             . " p.productname,p.productid,i.remark,i.count,r.createtime"
             . " from indentreviewlist r"
             . " left join indent i on r.indent=i.indentid"
@@ -148,7 +148,7 @@ class ReviewIndentModel extends Model
             ];
         } else {
             return [
-                "rusult" => 0,
+                "result" => 0,
                 "count" => count($result),
                 "indentreviewlist" => $result,
             ];
@@ -237,13 +237,13 @@ class ReviewIndentModel extends Model
         }
 
         //drawbacklist:d | productdetail:p | indent:i
-        $sql = "select d.drawbackid,d.indent,d.reason,"
+        $sql = "select d.drawbackid,d.indent,d.reason,d.status,"
             . " p.productname,p.productid,i.count,d.createtime"
             . " from drawbacklist d"
             . " left join indent i on d.indent=i.indentid"
             . " left join productdetail p on i.product=p.productid"
-            . " where d.admin is null and d.isdelete=0 and d.status<4"
-            . " order by d.createtime"; //按时间顺序，越早申请越靠前
+            . " where d.isdelete=0 and d.status<4"
+            . " order by d.updatetime desc,d.createtime"; //按时间顺序，越早申请越靠前
         $result = $this->query($sql);
         if (!$result) {
             return [
@@ -252,7 +252,7 @@ class ReviewIndentModel extends Model
             ];
         } else {
             return [
-                "rusult" => 0,
+                "result" => 0,
                 "count" => count($result),
                 "drawbacklist" => $result,
             ];

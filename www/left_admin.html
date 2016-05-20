@@ -1,9 +1,16 @@
 <div class="list-group" id="left">
     <a href="manageProduct.html" class="list-group-item" title="go_manage">管理商品</a>
-    <a href="createProduct.html" class="list-group-item" title="go_cart">新增商品</a>
-    <a href="reviewIndent.html" class="list-group-item" title="go_indent">审核订单</a>
+    <a href="createProduct.html" class="list-group-item" title="go_createProduct">新增商品</a>
+    <a href="reviewIndent.html" class="list-group-item" title="go_reviewIndent">审核订单</a>
     <a href="myIndent.html" class="list-group-item" title="go_myIndent">我审核的订单</a>
-    <a href="sendOut.html" class="list-group-item" title="go_sendOut">发货</a>
-    <a href="dealDrawback.html" class="list-group-item" title="go_sendOut">退款处理</a>
-    <a href="viewFeedback.html" class="list-group-item" title="go_viewFeedback">查看反馈</a>
+    <a href="dealDrawback.html" class="list-group-item" title="go_dealDrawback">退款处理</a>
 </div>
+
+<script>
+    //调整class
+    $(document).ready(function(){
+        var pathname = window.location.pathname;
+        var pagename = pathname.replace('/www/','');
+        $("[href='"+pagename+"']").addClass("active");
+    });
+</script>

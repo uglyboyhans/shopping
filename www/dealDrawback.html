@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>所有退款申请</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- zui -->
+        <link href="css/zui.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!--row-->
+        <div class="row">
+
+            <!--Top-->
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div id="top"></div>
+            </div>
+            <!--end Top-->
+
+            <!--Left-->
+            <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                <div id="left"></div>
+            </div>
+            <!--end Left-->
+
+            <!--main-->
+            <div id="main" class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                <div class="list">
+                    <header>
+                        <h3><i class="icon-list-ul icon-border-circle"></i> 退款申请 &nbsp;<small><span id="count">0</span> 次记录</small></h3>
+                    </header>
+                    <form class="items items-hover" id="drawbackList">
+
+                    </form>
+
+                </div>
+            </div>
+            <!--end main-->
+
+        </div>
+        <!--end row-->
+
+        <!--footer-->
+        <footer>
+        </footer>
+        <!--end footer-->
+
+        <!--js-->
+        <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+        <script src="lib/jquery/jquery.js" type="text/javascript"></script>
+        <!-- ZUI Javascript组件 -->
+        <script src="js/zui.min.js"></script>
+        <script src="load/urlconfig.js" type="text/javascript"></script>
+        <script src="load/footer.js" type="text/javascript"></script>
+        <script src="load/checkLogin.js" type="text/javascript"></script>
+
+        <script>
+            var reviewid;
+
+            $(document).ready(function () {
+                //获取indent信息:
+                //提示正在获取订单信息
+                var searching = new $.zui.Messager(
+                        '<i class="icon-ok-sign"></i>正在获取清单信息。。。', {
+                            placement: 'center',
+                            type: 'success',
+                            time: 0//搜索完毕之前都不隐藏
+                        });
+                searching.show();
+
+                $.ajax({
+                    type: 'GET',
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ReviewIndent&f=viewDrawback',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            $('#count').text(result.count);
+                            for (var i in result.drawbacklist) {//注意对象名
+                                var drawbacklist = result.drawbacklist[i];
+                                //用状态名替换状态号:
+                                switch (parseInt(drawbacklist.status)) {
+                                    case 0:
+                                        drawbacklist.status = '未处理';
+                                        break;
+                                    case 1:
+                                        drawbacklist.status = '开始处理';
+                                        break;
+                                    case 2:
+                                        drawbacklist.status = '已退款';
+                                        break;
+                                    case 3:
+                                        drawbacklist.status = '已驳回';
+                                        break;
+                                    default:
+                                        drawbacklist.status = '错误状态';
+                                }
+                                $("#drawbackList").append(
+                                        '<div class="item">\n\
+                            <div class="item-content row">\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <a href="productDetail.html?productid=' + drawbacklist.productid + '" class="text-primary">' + drawbacklist.productname + '</a>\n\
+                                </div>\n\
+                                <div class="text col-lg-3 col-md-3 col-xs-3 col-sm-3">\n\
+                                    <div>\n\
+                                        <label class="text-primary">数量:</label>\n\
+                                        <label class="text-warning">' + drawbacklist.count + '</label>\n\
+                                    </div>\n\
+                                    <div>\n\
+                                        <label class="text-primary">申请原因:</label>\n\
+                                        <label class="text-warning">' + drawbacklist.reason + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <div>\n\
+                                        <label class="text-primary">状态:</label>\n\
+                                        <label class="text-warning">' + drawbacklist.status + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <div>\n\
+                                        <label class="text-primary">创建时间:</label>\n\
+                                        <label class="text-warning">' + drawbacklist.createtime + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 pull-right">\n\
+                                    <div class="dropdown">\n\
+                                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">\n\
+                                            操作\n\
+                                            <span class="caret"></span>\n\
+                                        </button>\n\
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">\n\
+                                            <li>\n\
+                                                <a href="#" class="deal" title="1" name="' + drawbacklist.drawbackid + '" >开始处理</a>\n\
+                                            </li>\n\
+                                            <li>\n\
+                                                <a href="#" class="deal" title="2" name="' + drawbacklist.drawbackid + '" >退款</a>\n\
+                                            </li>\n\
+                                            <li>\n\
+                                                <a href="#" class="deal" title="3" name="' + drawbacklist.drawbackid + '" >驳回</a>\n\
+                                            </li>\n\
+                                        </ul>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>\n\
+                        </div>'
+                                        );
+                            }
+                            searching.hide();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            searching.hide();
+                            msg.show();
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            searching.hide();
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            });
+
+            $("#drawbackList").on("click", ".deal", function () {
+                var status = this.title;
+                var drawbackid = this.name;
+                var params = "drawbackid=" + drawbackid + "&status=" + status;
+                $.ajax({
+                    type: 'POST',
+                    data: params,
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ReviewIndent&f=dealDrawback',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-ok-sign"></i>处理成功', {
+                                        placement: 'center',
+                                        type: 'success'
+                                    });
+                            msg.show();
+                            window.location.reload();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-warning-sign"></i>管理员未登录', {
+                                        placement: 'center',
+                                        type: 'warning'
+                                    });
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            })
+        </script>
+    </body>
+</html>

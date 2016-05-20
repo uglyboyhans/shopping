@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>我审核的订单</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- zui -->
+        <link href="css/zui.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <!--row-->
+        <div class="row">
+
+            <!--Top-->
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div id="top"></div>
+            </div>
+            <!--end Top-->
+
+            <!--Left-->
+            <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                <div id="left"></div>
+            </div>
+            <!--end Left-->
+
+            <!--main-->
+            <div id="main" class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                <div class="list">
+                    <header>
+                        <h3><i class="icon-list-ul icon-border-circle"></i> 订单 &nbsp;<small><span id="count">0</span> 次记录</small></h3>
+                    </header>
+                    <form class="items items-hover" id="indentList">
+
+                    </form>
+
+                </div>
+            </div>
+            <!--end main-->
+
+        </div>
+        <!--end row-->
+
+        <!--footer-->
+        <footer>
+        </footer>
+        <!--end footer-->
+
+        <!--js-->
+        <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+        <script src="lib/jquery/jquery.js" type="text/javascript"></script>
+        <!-- ZUI Javascript组件 -->
+        <script src="js/zui.min.js"></script>
+        <script src="load/urlconfig.js" type="text/javascript"></script>
+        <script src="load/footer.js" type="text/javascript"></script>
+        <script src="load/checkLogin.js" type="text/javascript"></script>
+
+        <script>
+            var reviewid;
+
+            $(document).ready(function () {
+                //获取indent信息:
+                //提示正在获取订单信息
+                var searching = new $.zui.Messager(
+                        '<i class="icon-ok-sign"></i>正在获取订单信息。。。', {
+                            placement: 'center',
+                            type: 'success',
+                            time: 0//搜索完毕之前都不隐藏
+                        });
+                searching.show();
+
+                $.ajax({
+                    type: 'GET',
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ReviewIndent&f=myReview',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            $('#count').text(result.count);
+                            for (var i in result.indentreviewlist) {//注意对象名
+                                var indent = result.indentreviewlist[i];
+                                //用状态名替换状态号:
+                                switch (parseInt(indent.status)) {
+                                    case 0:
+                                        indent.status = '未审核';
+                                        break;
+                                    case 1:
+                                        indent.status = '已审核并发货';
+                                        break;
+                                    case 2:
+                                        indent.status = '审核失败';
+                                        break;
+                                    default:
+                                        indent.status = '错误状态';
+                                }
+                                $("#indentList").append(
+                                        '<div class="item">\n\
+                            <div class="item-content row">\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <a href="productDetail.html?productid=' + indent.productid + '" class="text-primary">' + indent.productname + '</a>\n\
+                                </div>\n\
+                                <div class="text col-lg-3 col-md-3 col-xs-3 col-sm-3">\n\
+                                    <div>\n\
+                                        <label class="text-primary">数量:</label>\n\
+                                        <label class="text-warning">' + indent.count + '</label>\n\
+                                    </div>\n\
+                                    <div>\n\
+                                        <label class="text-primary">备注:</label>\n\
+                                        <label class="text-warning">' + indent.remark + '</label>\n\
+                                    </div>\n\
+                                    <div>\n\
+                                        <label class="text-primary">地址:</label>\n\
+                                        <label class="text-warning">' + indent.address + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <div>\n\
+                                        <label class="text-primary">状态:</label>\n\
+                                        <label class="text-warning">' + indent.status + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="text col-lg-2 col-md-2 col-xs-2 col-sm-2">\n\
+                                    <div>\n\
+                                        <label class="text-primary">创建时间:</label>\n\
+                                        <label class="text-warning">' + indent.createtime + '</label>\n\
+                                    </div>\n\
+                                </div>\n\
+                                <div class="col-lg-3 col-md-3 col-xs-3 col-sm-3 pull-right">\n\
+                                    <div class="dropdown">\n\
+                                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">\n\
+                                            操作\n\
+                                            <span class="caret"></span>\n\
+                                        </button>\n\
+                                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">\n\
+                                            <li>\n\
+                                                <a href="#" title="sendOut" name="' + indent.reviewid + '" >发货</a>\n\
+                                            </li>\n\
+                                        </ul>\n\
+                                    </div>\n\
+                                </div>\n\
+                            </div>\n\
+                        </div>'
+                                        );
+                            }
+                            searching.hide();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            searching.hide();
+                            msg.show();
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            searching.hide();
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            });
+
+            $("#indentList").on('click', "[title='sendOut']", function () {
+                reviewid = this.name;
+                var remote;
+                if (2 === checkLogin()) {
+                    remote = 'sendOut.html';
+                } else {
+                    remote = 'adminLogin.html';
+                }
+                var options = {
+                    type: 'ajax',
+                    keyboard: false,
+                    remote: remote,
+                };
+                var ModalTrigger = new $.zui.ModalTrigger(options);
+                ModalTrigger.show();
+            });
+        </script>
+    </body>
+</html>

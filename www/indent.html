@@ -80,7 +80,6 @@
                     url: serverUrl() + '/index.php?m=Indent&f=viewIndent',
                     dataType: 'json',
                     success: function (result) {
-                        console.log(result);
                         if (result.result === 0) {
                             $('#count').text(result.count);
                             for (var i in result.indent) {
