@@ -109,16 +109,8 @@ class ManageProductModel extends Model
         $sql = "select d.productid,d.productname,d.price,d.cover,d.isused,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
             . " where d.isdelete=0 and d.productname like '%$productName%'"
-            . " order by s.summaryid desc";
-        if ($byPrice == 1) {
-            $sql = $sql . ",d.price desc";
-        }
-        if ($byScore == 1) {
-            $sql = $sql . ",s.avescore";
-        }
-        if ($bySales == 1) {
-            $sql = $sql . ",s.sales";
-        }
+            . " order by d.createtime desc";
+        
         if ($pageIndex < 1) {
             $pageIndex = 1;
         }
@@ -160,7 +152,7 @@ class ManageProductModel extends Model
         $productId = $args['productid'];
         //将使用状态isused置为1
         $sql = "update productdetail set isused=1 where productid = $productId";
-        if ($this->execute($sql) !== false) {
+        if ($this->execute($sql) === false) {
             return [
                 "result" => 1,
                 "error" => "修改失败"
@@ -262,7 +254,7 @@ class ManageProductModel extends Model
             ];
         } else {
             return [
-                "resutl" => 0
+                "result" => 0
             ];
         }
     }
@@ -293,6 +285,7 @@ class ManageProductModel extends Model
                 "error" => "获取商品信息失败"
             ];
         } else {
+            $result[0]['content'] = htmlspecialchars_decode($result[0]['content']);
             return [
                 "result" => 0,
                 "product" => $result[0],
@@ -315,7 +308,13 @@ class ManageProductModel extends Model
                 "error" => "管理员未登录",
             ];
         }
-        $productId = $args['productid'];
+        $productId = $args['productid'] ? $args['productid'] : false;
+        if (!$productId) {
+            return [
+                "result" => 1,
+                "error" => "空商品id"
+            ];
+        }
         $productname = $args['productname'] ? $args['productname'] : '';
         $price = $args['price'] ? $args['price'] : 99999999;
         $chargeunit = $args['chargeunit'] ? $args['chargeunit'] : '';
@@ -324,15 +323,26 @@ class ManageProductModel extends Model
         $content = $args['content'] ? $args['content'] : '';
         $cover = $args['cover'] ? $args['cover'] : '';
 
-        $sql = "update productdetail set"
-            . " productname = '$productname',"
-            . " price = $price,"
-            . " chargeunit = '$chargeunit',"
-            . " stock = $stock,"
-            . " abstract = '$abstract',"
-            . " content = '$content',"
-            . " cover = '$cover'"
-            . " where productid = $productId";
+        if (!$cover) {
+            $sql = "update productdetail set"
+                . " productname = '$productname',"
+                . " price = $price,"
+                . " chargeunit = '$chargeunit',"
+                . " stock = $stock,"
+                . " abstract = '$abstract',"
+                . " content = '$content'"
+                . " where productid = $productId";
+        } else {
+            $sql = "update productdetail set"
+                . " productname = '$productname',"
+                . " price = $price,"
+                . " chargeunit = '$chargeunit',"
+                . " stock = $stock,"
+                . " abstract = '$abstract',"
+                . " content = '$content',"
+                . " cover = '$cover'"
+                . " where productid = $productId";
+        }
         if ($this->execute($sql) !== false) {
             return [
                 "result" => 0

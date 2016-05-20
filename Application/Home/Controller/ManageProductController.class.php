@@ -138,6 +138,24 @@ class ManageProductController extends Controller
     public function saveEdit()
     {
         $params = I('post.');
+        //拿上传的封面
+        $upload = new \Think\Upload();
+        $upload->exts = array('jpg', 'gif', 'png', 'jpeg');
+        $upload->rootPath = 'Uploads/'; // 设置附件上传根目录
+        $upload->savePath = 'cover/'; // 设置附件上传（子）目录
+        $upload->saveName = md5(uniqid());
+        //get extention of the file:
+        $nameReverse = strrev($_FILES["cover"]['name']); //reverse the file name
+        $cutString = explode(".", $nameReverse);
+        $upload->saveExt = strrev($cutString[0]);
+        $upload->autoSub = false;
+        // 上传文件
+        $info = $upload->upload();
+        if (!$info) {// 上传错误提示错误信息
+            unset($params['cover']);
+        } else {// 上传成功
+            $params['cover'] = C('webroot') . $upload->rootPath . $upload->savePath . $upload->saveName . '.' . $upload->saveExt;
+        }
         $result = D('ManageProduct')->saveEdit($params);
         echo json_encode($result);
     }

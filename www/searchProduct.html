@@ -114,8 +114,8 @@
                 var productname = getUrlParam('productname');
                 if (productname !== null) {
                     $("#frmInfo [name='productname']").val(productname);
-                    searchProduct();
                 }
+                searchProduct();
             });
 
             //function搜索商品（点击上一页下一页也会调用）

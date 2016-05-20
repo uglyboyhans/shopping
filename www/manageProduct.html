@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>管理商品</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- zui -->
+        <link href="css/zui.min.css" rel="stylesheet">
+        <link href="lib/datetimepicker/datetimepicker.min.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+        <!--row-->
+        <div class="row">
+
+            <!--Top-->
+            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+                <div id="top"></div>
+            </div>
+            <!--end Top-->
+
+            <!--Left-->
+            <div class="col-lg-2 col-md-2 col-xs-2 col-sm-2">
+                <div id="left"></div>
+            </div>
+            <!--end Left-->
+
+            <!--main-->
+            <div id="main" class="col-lg-10 col-md-10 col-xs-10 col-sm-10">
+                <!--搜索框-->
+                <div>
+                    <form class="form-horizontal" id="frmInfo" role="form" method='post'>
+                        <div class="form-group">
+                            <div class="col-lg-6 col-md-6 col-xs-6 col-sm-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="icon-search"></i></span>
+                                    <input name="productname" type="text" placeholder="商品名称..." class="form-control">
+                                    <span class="input-group-btn">
+                                        <button id="submit" class="btn btn-default" type="button">搜索</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class='col-md-1'>
+                                <span class="input-group-btn">
+                                    <button id="prePage" class="btn btn-default" type="button">上一页</button>
+                                </span>
+                            </div>
+                            <div class='col-md-1'><!--页码-->
+                                <input type='text' name='pageindex'  data-toggle="tooltip" title="输入页码再点击搜索可直接跳转" id='pageindex' class='form-control' />
+                            </div>
+                            <div class='col-md-1'>
+                                <span class="input-group-btn">
+                                    <button id="nextPage" class="btn btn-default" type="button">下一页</button>
+                                </span>
+                            </div>
+                            <label class="col-md-1 control-label">每页数量</label>
+                            <div class='col-md-1'>
+                                <input type='text' name='pagesize' id='pagesize' class='form-control' />
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <!--end搜索框-->
+
+                <!--显示商品的卡片-->
+                <div class="list">
+                    <header>
+                        <h3><i class="icon-list-ul icon-border-circle"></i> 搜索结果 &nbsp;<small><span id="count">0</span> 件商品</small></h3>
+                    </header>
+                    <!--用js获取数据然后填充-->
+                    <div id="productList"></div>
+                </div>
+                <!--end显示商品的卡片-->
+
+            </div>
+            <!--end main-->
+
+        </div>
+        <!--end row-->
+
+        <!--footer-->
+        <footer>
+        </footer>
+        <!--end footer-->
+
+        <!--js-->
+        <!-- jQuery (ZUI中的Javascript组件依赖于jQuery) -->
+        <script src="lib/jquery/jquery.js" type="text/javascript"></script>
+        <!-- ZUI Javascript组件 -->
+        <script src="js/zui.min.js"></script>
+        <script src="load/urlconfig.js" type="text/javascript"></script>
+        <script src="load/footer.js" type="text/javascript"></script>
+        <script src="load/checkLogin.js" type="text/javascript"></script>
+
+        <script>
+            var productid;
+
+            $(document).ready(function () {
+                searchProduct();
+            });
+
+            //function搜索商品（点击上一页下一页也会调用）
+            function searchProduct() {
+                //先清空productList里面的元素
+                $('#productList').empty();
+
+                //提示正在搜索
+                var searching = new $.zui.Messager(
+                        '<i class="icon-ok-sign"></i>正在搜索。。。', {
+                            placement: 'center',
+                            type: 'success',
+                            time: 0//搜索完毕之前都不隐藏
+                        });
+                searching.show();
+
+                //获取入参
+                var params = $("#frmInfo").serialize();
+                $.ajax({
+                    type: 'POST',
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ManageProduct&f=searchProduct',
+                    data: params,
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            //按数量添加section
+                            var sectionCount = result.count / 4 + 1;
+                            for (var i = 0; i < sectionCount; i++) {
+                                $("#productList").append('<section class="cards"></section>');
+                            }
+
+                            //设置页号和页长
+                            $('#pageindex').val(result.pageindex);
+                            $('#pagesize').val(result.pagesize);
+
+                            //put product into cards:
+                            $('#count').text(result.count);
+                            for (var i in result.product) {
+                                var rowNumber = Math.floor(i / 4);//放到第rowNumber个section里
+                                var product = result.product[i];
+                                if (!product.cover) {
+                                    product.cover = "src/icon/default.png";
+                                }
+                                if (!product.avescore) {
+                                    product.avescore = 5;
+                                }
+                                if (!product.sales) {
+                                    product.sales = 0;
+                                }
+                                //将isused映射为文字:
+                                switch (parseInt(product.isused)) {
+                                    case 0:
+                                        product.isused = '存档';
+                                        break;
+                                    case 1:
+                                        product.isused = '线上使用';
+                                }
+                                $(".cards").eq(rowNumber).append('\n\
+                                        <div class="col-md-4 col-sm-6 col-lg-3">\n\
+                                            <div class="card">\n\
+                                                <a href="productDetail.html?productid=' + product.productid + '" class="media-wrapper">\n\
+                                                    <img src="' + product.cover + '" width="100%" alt="">\n\
+                                                </a>\n\
+                                                <span class="caption">价格' + product.price + '<br />\n\
+                                                评分：' + product.avescore + '<br />\n\
+                                                销量：' + product.sales + '</span>\n\
+                                                <label class="text-primary">状态：' + product.isused + '</label>\n\
+                                                <a href="productDetail.html?productid=' + product.productid + '" class="card-heading"><strong>' + product.productname + '</strong></a>\n\
+                                                <div class="dropup btn-group">\n\
+                                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown">\n\
+                                                        操作\n\
+                                                        <span class="caret"></span>\n\
+                                                    </button>\n\
+                                                    <ul class="dropdown-menu" role="menu">\n\
+                                                        <li>\n\
+                                                            <a href="#" title="setUse" name="' + product.productid + '" >上线</a>\n\
+                                                        </li>\n\
+                                                        <li>\n\
+                                                            <a href="#" title="setNoUse" name="' + product.productid + '">存档</a>\n\
+                                                        </li>\n\
+                                                        <li>\n\
+                                                            <a href="#" title="delete" name="' + product.productid + '">删除</a>\n\
+                                                        </li>\n\
+                                                        <li class="divider"></li>\n\
+                                                        <li>\n\
+                                                            <a href="#" title="edit" name="' + product.productid + '">编辑</a>\n\
+                                                        </li>\n\
+                                                    </ul>\n\
+                                                </div>\n\
+                                             </div>\n\
+                                         </div>'
+                                        );
+                            }
+
+                            searching.hide();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>搜索失败，或找不到你需要的商品', {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                            $('#count').text(0);
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-warning-sign"></i>管理员未登录！', {
+                                        placement: 'center',
+                                        type: 'warning'
+                                    });
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        searching.hide();
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            }
+            //点提交
+            $("#submit").click(function () {
+                searchProduct();
+            });
+
+            //上一页
+            $("#prePage").click(function () {
+                //设置页号
+                $('#pageindex').val(parseInt($('#pageindex').val()) - 1);
+                searchProduct();
+            });
+
+            //下一页
+            $("#nextPage").click(function () {
+                //设置页号
+                $('#pageindex').val(parseInt($('#pageindex').val()) + 1);
+                searchProduct();
+            });
+
+            //页码框提示消息
+            $('[toggle="tooltip"]').tooltip({
+                'options': 'bottom',
+                'animation': false
+            });
+
+            //操作：
+            $("#productList").on('click', "[title='setUse']", function () {
+                var productid = this.name;
+                $.ajax({
+                    type: 'POST',
+                    data: 'productid=' + productid,
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ManageProduct&f=setUse',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-ok-sign"></i>设置成功', {
+                                        placement: 'center',
+                                        type: 'success'
+                                    });
+                            msg.show();
+                            window.location.reload();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-warning-sign"></i>管理员未登录', {
+                                        placement: 'center',
+                                        type: 'warning'
+                                    });
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            });
+
+            $("#productList").on('click', "[title='setNoUse']", function () {
+                var productid = this.name;
+                $.ajax({
+                    type: 'POST',
+                    data: 'productid=' + productid,
+                    crossDomain: true,
+                    url: serverUrl() + '/index.php?m=ManageProduct&f=setNoUse',
+                    dataType: 'json',
+                    success: function (result) {
+                        if (result.result === 0) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-ok-sign"></i>设置成功', {
+                                        placement: 'center',
+                                        type: 'success'
+                                    });
+                            msg.show();
+                            window.location.reload();
+                        } else if (result.result === 1) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        } else if (result.result === 2) {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-warning-sign"></i>管理员未登录', {
+                                        placement: 'center',
+                                        type: 'warning'
+                                    });
+                            msg.show();
+                        }
+                    },
+                    error: function () {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    },
+                });
+            });
+
+            $("#productList").on('click', "[title='delete']", function () {
+                var productid = this.name;
+                var r = confirm("确定删除？");
+                if (r === true) {
+                    $.ajax({
+                        type: 'POST',
+                        data: 'productid=' + productid,
+                        crossDomain: true,
+                        url: serverUrl() + '/index.php?m=ManageProduct&f=deleteProduct',
+                        dataType: 'json',
+                        success: function (result) {
+                            if (result.result === 0) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-ok-sign"></i>删除成功', {
+                                            placement: 'center',
+                                            type: 'success'
+                                        });
+                                msg.show();
+                                window.location.reload();
+                            } else if (result.result === 1) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                            placement: 'center',
+                                            type: 'danger'
+                                        });
+                                msg.show();
+                            } else if (result.result === 2) {
+                                var msg = new $.zui.Messager(
+                                        '<i class="icon-warning-sign"></i>管理员未登录', {
+                                            placement: 'center',
+                                            type: 'warning'
+                                        });
+                                msg.show();
+                            }
+                        },
+                        error: function () {
+                            var msg = new $.zui.Messager(
+                                    '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                                        placement: 'center',
+                                        type: 'danger'
+                                    });
+                            msg.show();
+                        },
+                    });
+                } else {
+                    return false;
+                }
+            });
+
+            $("#productList").on('click', "[title='edit']", function () {
+                productid = this.name;
+                var remote;
+                if (2 === checkLogin()) {
+                    remote = 'editProduct.html';
+                } else {
+                    remote = 'adminLogin.html';
+                }
+                var options = {
+                    type: 'ajax',
+                    keyboard: false,
+                    remote: remote,
+                };
+                var ModalTrigger = new $.zui.ModalTrigger(options);
+                ModalTrigger.show();
+            });
+        </script>
+    </body>
+</html>
