@@ -1,0 +1,80 @@
+<!--弹出添加反馈对话框-->
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+            <h4 class="modal-title">添加反馈</h4>
+        </div>
+        <div class="modal-body">
+            <form id="feedbackInfo" role="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">反馈信息:</label>
+                    <div class="input-group col-md-10">
+                        <textarea name='content' id='content' rows='1' class='form-control' placeholder="请输入您的意见、建议。您的不满意是我们前进的动力..."></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" id="feedback_cancle" class="btn btn-default" data-dismiss="modal">关闭</button>
+            <button type="button" id="feedback_submit" class="btn btn-danger">提交反馈</button>
+        </div>
+    </div>
+</div>
+<!--end弹出申请退款对话框-->
+<script>
+    //提交反馈:
+    $("#feedback_submit").click(function () {
+        //检查入参不为空
+        if ($("#content").val() === "") {
+            var msg = new $.zui.Messager('<i class="icon-warning-sign"></i>请输入您的意见或建议', {
+                placement: 'center',
+                type: 'warning'
+            });
+            msg.show();
+            return false;
+        }
+
+        var params = $("#feedbackInfo").serialize();
+        $.ajax({
+            type: 'POST',
+            crossDomain: true,
+            url: serverUrl() + "/index.php?m=Feedback&f=addFeedback",
+            data: params,
+            dataType: 'json',
+            success: function (result) {
+                if (result.result === 0) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-ok-sign"></i>提交成功', {
+                                placement: 'center',
+                                type: 'success'
+                            });
+                    msg.show();
+                    window.location.reload();
+                } else if (result.result === 1) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                placement: 'center',
+                                type: 'danger'
+                            });
+                    msg.show();
+                } else if (result.result === 2) {
+                    var msg = new $.zui.Messager(
+                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                placement: 'center',
+                                type: 'warning'
+                            });
+                    msg.show();
+                }
+            },
+            error: function () {
+                var msg = new $.zui.Messager(
+                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
+                            placement: 'center',
+                            type: 'danger'
+                        });
+                msg.show();
+            },
+        });
+    });
+</script>
