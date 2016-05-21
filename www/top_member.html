@@ -34,19 +34,19 @@
             url: serverUrl() + '/index.php?m=User&f=getUserInfo',
             dataType: 'json',
             success: function (result) {
-                if (result.result == 0) {
+                if (result.result === 0) {
                     var userInfo = result.userinfo;
                     if (userInfo.icon.length > 0) {
                         $("#top_icon").attr("src", userInfo.icon);
                     }
-                } else if (result.result == 1) {
+                } else if (result.result === 1) {
                     var msg = new $.zui.Messager(
-                            '<i class="icon-exclamation-sign"></i>获取信息失败', {
+                            '<i class="icon-exclamation-sign"></i>'result.error, {
                                 placement: 'center',
                                 type: 'danger'
                             });
                     msg.show();
-                } else if (result.result == 2) {
+                } else if (result.result === 2) {
                     var msg = new $.zui.Messager(
                             '<i class="icon-warning-sign"></i>用户未登录！', {
                                 placement: 'center',
