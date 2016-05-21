@@ -5,6 +5,7 @@
         <li><a href="indent.html" class="list-group-item" title="go_indent">我的订单</a></li>
         <li><a href="userInfo.html" class="list-group-item" title="go_userInfo">个人信息</a></li>
         <li><a href="#" class="list-group-item" title="go_about">关于我们</a></li>
+        <li><a href="#" class="list-group-item" title="go_feedback">反馈</a></li>
     </ul>
 </div>
 
@@ -20,10 +21,27 @@
         myModalTrigger.show();
     });
 
+    //添加反馈
+    $("[title='go_feedback']").click(function () {
+        var remote;
+        if (0 === checkLogin()) {
+            remote = 'feedback.html';
+        } else {
+            remote = 'login.html';
+        }
+        var options = {
+            type: 'ajax',
+            keyboard: false,
+            remote: remote,
+        };
+        var ModalTrigger = new $.zui.ModalTrigger(options);
+        ModalTrigger.show();
+    });
+
     //调整class
-    $(document).ready(function(){
+    $(document).ready(function () {
         var pathname = window.location.pathname;
-        var pagename = pathname.replace('/www/','');
-        $("[href='"+pagename+"']").addClass("active");
+        var pagename = pathname.replace('/www/', '');
+        $("[href='" + pagename + "']").addClass("active");
     });
 </script>

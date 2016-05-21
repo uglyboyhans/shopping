@@ -118,6 +118,8 @@ class FeedbackModel extends Model
                 'result' => 0,
                 'count' => count($result),
                 'feedback' => $result,
+                'pageindex' => $pageIndex,
+                'pagesize'=>$pageSize,
             ];
         } else {
             return[
