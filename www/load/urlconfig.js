@@ -1,5 +1,5 @@
 function serverUrl() {
-    return 'http://www.shopping.com';
+    return 'http://www.cqushop.cn';
 }
 
 function getUrlParam(name) {
