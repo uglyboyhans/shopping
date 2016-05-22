@@ -66,31 +66,11 @@
     </div>
 </div>
 <!--end弹出编辑对话框-->
+<script src="lib/kindeditor/kindeditor.min.js" type="text/javascript"></script>
 <script>
-    //初始化富文本编辑器kindeditor
-    var initKindeditor = function () {
-        var K = window.KindEditor;
-        if (K)
-        {
-            K.create('textarea.kindeditor',
-                    {
-                        basePath: 'lib/kindeditor/',
-                        allowFileManager: true,
-                        bodyClass: 'article-content',
-                        afterBlur: function () {
-                            this.sync();
-                        },
-                        afterFocus: function () {
-                            $('#content').prev('.ke-container').addClass('focus');
-                        }
-                    });
-        }
-        //setTimeout($.doc.stopPageLoading, 500);
-    };
-    $.getScript('lib/kindeditor/kindeditor.min.js', initKindeditor);
-    $(document).on('click', '.ke-dialog-mask, .ke-dialog', function (e) {
-        e.stopPropagation();
-    });
+    var editor;
+    var editorHtml;
+    KindEditor.options.filterMode = false;
 
     //读取商品详情
     $(document).ready(function () {
@@ -110,9 +90,15 @@
                     $("#stock").val(product.stock);
                     $("#chargeunit").val(product.chargeunit);
                     $("#abstract").val(product.abstract);
-                    $(document.getElementsByTagName('iframe')[0].contentWindow.document.body).html('');//先清空
-                    $(document.getElementsByTagName('iframe')[0].contentWindow.document.body).html(product.content);
-                } else if (result.result === 1) {
+                    $("#content").val(product.content);
+                    //初始化富文本编辑器kindeditor:
+                    editor = KindEditor.create('#content');
+                    editorHtml = editor.html();
+                    editorHtml = KindEditor("#content").val();
+                    editor.html(editorHtml);
+                    editor.sync();//editor同步数据
+
+        } else if (result.result === 1) {
                     var msg = new $.zui.Messager(
                             '<i class="icon-exclamation-sign"></i>获取信息失败', {
                                 placement: 'center',
