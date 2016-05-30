@@ -75,7 +75,7 @@
                     $("#thistotal").text(product.price);
                 } else if (result.result === 1) {
                     var msg = new $.zui.Messager(
-                            '<i class="icon-exclamation-sign"></i>获取信息失败', {
+                            '<i class="icon-exclamation-sign"></i>' + result.error, {
                                 placement: 'center',
                                 type: 'danger'
                             });

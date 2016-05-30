@@ -153,162 +153,166 @@
                         msg.show();
                     },
                 });
-            });
 
-            $("#cartList").on('click', '.pay', function () {
-                productid = this.value;
-                var remote;
-                if (0 === checkLogin()) {
-                    remote = 'buyOne.html';
-                } else {
-                    remote = 'login.html';
-                }
-                var options = {
-                    type: 'ajax',
-                    keyboard: false,
-                    remote: remote,
-                };
-                var ModalTrigger = new $.zui.ModalTrigger(options);
-                ModalTrigger.show();
-            });
+                $(document).on("click", " .pay", function () {
+                    productid = this.value;
+                    var remote;
+                    if (0 === checkLogin()) {
+                        remote = 'buyOne.html';
+                    } else {
+                        remote = 'login.html';
+                    }
+                    var options = {
+                        type: 'ajax',
+                        keyboard: false,
+                        remote: remote
+                    };
+                    var ModalTrigger_buyOne = new $.zui.ModalTrigger(options);
+                    ModalTrigger_buyOne.show();
+                    return false;
+                });
 
-            $("#cartList").on('click', '.delete', function () {
-                var cartid = this.value;
-                var r = confirm("确定要删除？");
-                if (r === true) {
-                    $.ajax({
-                        type: 'POST',
-                        data: 'cartid=' + cartid,
-                        crossDomain: true,
-                        url: serverUrl() + '/index.php?m=Cart&f=delete',
-                        dataType: 'json',
-                        success: function (result) {
-                            if (result.result === 0) {
+                $(document).on("click", ' .delete', function () {
+                    var cartid = this.value;
+                    console.log(cartid);
+                    var r = confirm("确定要删除？");
+                    if (r === true) {
+                        $.ajax({
+                            type: 'POST',
+                            data: 'cartid=' + cartid,
+                            crossDomain: true,
+                            url: serverUrl() + '/index.php?m=Cart&f=delete',
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.result === 0) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-ok-sign"></i>删除成功', {
+                                                placement: 'center',
+                                                type: 'success'
+                                            });
+                                    msg.show();
+                                    window.location.reload();
+                                } else if (result.result === 1) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                                placement: 'center',
+                                                type: 'danger'
+                                            });
+                                    msg.show();
+                                } else if (result.result === 2) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                                placement: 'center',
+                                                type: 'warning'
+                                            });
+                                    msg.show();
+                                }
+                            },
+                            error: function () {
                                 var msg = new $.zui.Messager(
-                                        '<i class="icon-ok-sign"></i>删除成功', {
-                                            placement: 'center',
-                                            type: 'success'
-                                        });
-                                msg.show();
-                                window.location.reload();
-                            } else if (result.result === 1) {
-                                var msg = new $.zui.Messager(
-                                        '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
                                             placement: 'center',
                                             type: 'danger'
                                         });
                                 msg.show();
-                            } else if (result.result === 2) {
-                                var msg = new $.zui.Messager(
-                                        '<i class="icon-warning-sign"></i>用户未登录', {
-                                            placement: 'center',
-                                            type: 'warning'
-                                        });
-                                msg.show();
-                            }
-                        },
-                        error: function () {
-                            var msg = new $.zui.Messager(
-                                    '<i class="icon-exclamation-sign"></i>网络有问题！', {
-                                        placement: 'center',
-                                        type: 'danger'
-                                    });
-                            msg.show();
-                        },
-                    });
-                } else {
-                    return false;
-                }
-            });
+                            },
+                        });
+                        return false;
+                    } else {
+                        return false;
+                    }
+                });
 
-            $("#batchDeleteCart").click(function () {
-                var param = $("#cartList").serialize();
-                if (!param) {
-                    var msg = new $.zui.Messager(
-                            '<i class="icon-exclamation-sign"></i>请选择要删除的项！', {
-                                placement: 'center',
-                                type: 'danger'
-                            });
-                    msg.show();
-                    return false;
-                }
-                var r = confirm("确定要删除？");
-                if (r === true) {
-                    $.ajax({
-                        type: 'POST',
-                        data: param,
-                        crossDomain: true,
-                        url: serverUrl() + '/index.php?m=Cart&f=delete',
-                        dataType: 'json',
-                        success: function (result) {
-                            if (result.result === 0) {
+                $("#batchDeleteCart").click(function () {
+                    var param = $("#cartList").serialize();
+                    if (!param) {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>请选择要删除的项！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                        return false;
+                    }
+                    var r = confirm("确定要删除？");
+                    if (r === true) {
+                        $.ajax({
+                            type: 'POST',
+                            data: param,
+                            crossDomain: true,
+                            url: serverUrl() + '/index.php?m=Cart&f=delete',
+                            dataType: 'json',
+                            success: function (result) {
+                                if (result.result === 0) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-ok-sign"></i>删除成功', {
+                                                placement: 'center',
+                                                type: 'success'
+                                            });
+                                    msg.show();
+                                    window.location.reload();
+                                } else if (result.result === 1) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                                placement: 'center',
+                                                type: 'danger'
+                                            });
+                                    msg.show();
+                                } else if (result.result === 2) {
+                                    var msg = new $.zui.Messager(
+                                            '<i class="icon-warning-sign"></i>用户未登录', {
+                                                placement: 'center',
+                                                type: 'warning'
+                                            });
+                                    msg.show();
+                                }
+                            },
+                            error: function () {
                                 var msg = new $.zui.Messager(
-                                        '<i class="icon-ok-sign"></i>删除成功', {
-                                            placement: 'center',
-                                            type: 'success'
-                                        });
-                                msg.show();
-                                window.location.reload();
-                            } else if (result.result === 1) {
-                                var msg = new $.zui.Messager(
-                                        '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
                                             placement: 'center',
                                             type: 'danger'
                                         });
                                 msg.show();
-                            } else if (result.result === 2) {
-                                var msg = new $.zui.Messager(
-                                        '<i class="icon-warning-sign"></i>用户未登录', {
-                                            placement: 'center',
-                                            type: 'warning'
-                                        });
-                                msg.show();
-                            }
-                        },
-                        error: function () {
-                            var msg = new $.zui.Messager(
-                                    '<i class="icon-exclamation-sign"></i>网络有问题！', {
-                                        placement: 'center',
-                                        type: 'danger'
-                                    });
-                            msg.show();
-                        },
-                    });
-                } else {
-                    return false;
-                }
-            });
+                            },
+                        });
+                    } else {
+                        return false;
+                    }
+                });
 
-            //全选
-            $(document).on("click", "#selectAll", function () {
-                $("[name='cartid[]']").prop("checked", this.checked);
-            });
+                //全选
+                $(document).on("click", "#selectAll", function () {
+                    $("[name='cartid[]']").prop("checked", this.checked);
+                });
 
-            //批量付款
-            $("#batchBuyCart").click(function () {
-                var cartids = $("#cartList").serialize();
-                if (!cartids) {
-                    var msg = new $.zui.Messager(
-                            '<i class="icon-exclamation-sign"></i>请选择要付款的项！', {
-                                placement: 'center',
-                                type: 'danger'
-                            });
-                    msg.show();
-                    return false;
-                }
-                var remote;
-                if (0 === checkLogin()) {
-                    remote = 'batchBuyCart.html';
-                } else {
-                    remote = 'login.html';
-                }
-                var options = {
-                    type: 'ajax',
-                    keyboard: false,
-                    remote: remote,
-                };
-                var ModalTrigger = new $.zui.ModalTrigger(options);
-                ModalTrigger.show();
+                //批量付款
+                $("#batchBuyCart").click(function () {
+                    var cartids = $("#cartList").serialize();
+                    if (!cartids) {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>请选择要付款的项！', {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                        return false;
+                    }
+                    var remote;
+                    if (0 === checkLogin()) {
+                        remote = 'batchBuyCart.html';
+                    } else {
+                        remote = 'login.html';
+                    }
+                    var options = {
+                        type: 'ajax',
+                        keyboard: false,
+                        remote: remote
+                    };
+                    var ModalTrigger_batchBuy = new $.zui.ModalTrigger(options);
+                    ModalTrigger_batchBuy.show();
+                });
+
             });
 
         </script>

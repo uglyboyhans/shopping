@@ -71,10 +71,11 @@ class FeedbackModel extends Model
                 "error" => "参数错误"
             ];
         }
+        $paramArray = [$this->userid, $content];
         $sql = "insert into feedback"
             . " (user,content) values"
-            . " ($this->userid,'$content')";
-        if ($this->execute($sql) !== false) {
+            . " (%d,'%S')";
+        if ($this->execute($sql, $paramArray) !== false) {
             return [
                 "result" => 0,
             ];
@@ -101,6 +102,9 @@ class FeedbackModel extends Model
                 "error" => "管理员未登录"
             ];
         }
+
+        /****含有like，暂时不做PDO处理****/
+
         $content = $args['content'] ? $args['content'] : "";
         $bytime = $args['bytime'] == 1 ? 1 : 0;
         $pageIndex = $args['pageindex'] > 0 ? $args['pageindex'] : 1;
@@ -119,7 +123,7 @@ class FeedbackModel extends Model
                 'count' => count($result),
                 'feedback' => $result,
                 'pageindex' => $pageIndex,
-                'pagesize'=>$pageSize,
+                'pagesize' => $pageSize,
             ];
         } else {
             return[

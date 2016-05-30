@@ -95,7 +95,7 @@ class UserModelTest extends \PHPUnit_Framework_TestCase
     {
         $result = $this->object->getUserInfo();
         $this->assertEquals(0, $result['result']);
-        $this->assertTrue(is_array($result['address']));
+        $this->assertTrue(is_array($result['userinfo']));
     }
 
 }

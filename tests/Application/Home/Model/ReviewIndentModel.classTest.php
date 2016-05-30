@@ -75,7 +75,7 @@ class ReviewIndentModelTest extends \PHPUnit_Framework_TestCase
     public function testStartReview()
     {
         $args = [
-            'reviewid' => 22,
+            'reviewid' => 5,
         ];
         $this->assertEquals(0, $this->object->startReview($args)['result']);
     }
@@ -102,7 +102,7 @@ class ReviewIndentModelTest extends \PHPUnit_Framework_TestCase
         $args = [];
         $this->assertEquals(1, $this->object->sendOutProduct($args)['result']);
         $args = [
-            "reviewid" => 22,
+            "reviewid" => 5,
             "company" => 'G7',
             "logisticsnumber" => "avsr3232325",
         ];

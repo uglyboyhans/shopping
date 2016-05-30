@@ -69,9 +69,10 @@ class CartModel extends Model
             ];
         }
         $count = intval($args['count']) >= 1 ? intval($args['count']) : 1;
+        $paramArray = [$this->userid, $productid, $count];
         $sql = "insert into cart (user,product,count)"
-            . " values ($this->userid,$productid,$count)";
-        if ($this->execute($sql) !== false) {
+            . " values (%d,%d,%d)";
+        if ($this->execute($sql, $paramArray) !== false) {
             return [
                 "result" => 0
             ];
@@ -96,12 +97,13 @@ class CartModel extends Model
                 "error" => '用户未登录'
             ];
         }
+        $paramArray = [$this->userid];
         //cart:c, productdetail:p
         $sql = "select c.cartid,c.count,c.product,p.productname,p.price,p.cover"
             . " from cart c left join productdetail p on c.product=p.productid"
-            . " where c.user=$this->userid and c.isdelete=0"
+            . " where c.user=%d and c.isdelete=0"
             . " order by c.createtime desc";
-        $result = $this->query($sql);
+        $result = $this->query($sql, $paramArray);
         if ($result) {
             return [
                 "result" => 0,
@@ -134,9 +136,10 @@ class CartModel extends Model
         $cartids = $args['cartid'] ? $args['cartid'] : 0;
 
         if (!is_array($cartids)) {//若不是数组
+            $paramArray = [$cartids];
             $sql = "update cart set isdelete=1"
-                . " where cartid=$cartids";
-            if ($this->execute($sql) !== false) {
+                . " where cartid=%d";
+            if ($this->execute($sql, $paramArray) !== false) {
                 return [
                     "result" => 0
                 ];
@@ -151,9 +154,10 @@ class CartModel extends Model
                 if (!$cartid) {
                     continue;
                 }
+                $paramArray = [$cartid];
                 $sql = "update cart set isdelete=1"
-                    . " where cartid=$cartid";
-                if ($this->execute($sql) === false) {
+                    . " where cartid=%d";
+                if ($this->execute($sql, $paramArray) === false) {
                     return [
                         "result" => 1,
                         "error" => '部分商品可能移除失败'
@@ -193,6 +197,7 @@ class CartModel extends Model
                 ];
             }
         } else {
+            /*******暂时放弃此部分,因此不改为PDO方式*******/
             //获取商品相关信息:
             $sql = "select product,count from cart where cartid=$cartids";
             $result = $this->query($sql);

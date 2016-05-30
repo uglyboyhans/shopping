@@ -75,29 +75,35 @@ class UserModel extends Model
         if ($gender !== 0 && $gender !== 1 & $gender !== 2) {
             $gender = 2;
         }
+        $paramArray = [
+            $this->userid, $realname, $idcard, $address1, $address2, $address3, $address4, $icon,
+            $email, $birthdate, $phonenumber, $gender, //insert 字段
+            $realname, $idcard, $address1,
+            $address2, $address3, $address4, $email, $birthdate, $phonenumber, $gender, $icon, //update 字段
+        ];
         //sql:若存在就update.不存在就insert
         $sql = "insert into userinfo"
             . " (user,realname,idcard,address1,address2,address3,address4,"
             . " icon,email,birthdate,phonenumber,gender)"
             . " values"
-            . " ($this->userid,'$realname','$idcard','$address1','$address2','$address3','$address4',"
-            . " '$icon','$email','$birthdate','$phonenumber',$gender)"
+            . " (%d,'%s','%s','%s','%s','%s','%s',"
+            . " '%s','%s','%s','%s',%d)"
             . " ON DUPLICATE KEY UPDATE"
-            . " realname = '$realname',"
-            . " idcard = '$idcard',"
-            . " address1 = '$address1',"
-            . " address2 = '$address2',"
-            . " address3 = '$address3',"
-            . " address4 = '$address4',"
-            . " email = '$email',"
-            . " birthdate = '$birthdate',"
-            . " phonenumber = '$phonenumber',"
-            . " gender = $gender";
+            . " realname = '%s',"
+            . " idcard = '%s',"
+            . " address1 = '%s',"
+            . " address2 = '%s',"
+            . " address3 = '%s',"
+            . " address4 = '%s',"
+            . " email = '%s',"
+            . " birthdate = '%s',"
+            . " phonenumber = '%s',"
+            . " gender = %d";
         if ($icon !== "") {
-            $sql = $sql . " ,icon = '$icon'";
+            $sql = $sql . " ,icon = '%s'";
         }
 
-        if ($this->execute($sql) !== false) {
+        if ($this->execute($sql, $paramArray) !== false) {
             return [
                 "result" => 0
             ];
