@@ -231,6 +231,9 @@
             //上一页
             $("#prePage").click(function () {
                 //设置页号
+                if(!$('#pageindex').val()){
+                    $('#pageindex').val(0);
+                }
                 $('#pageindex').val(parseInt($('#pageindex').val()) - 1);
                 searchProduct();
             });
@@ -238,6 +241,9 @@
             //下一页
             $("#nextPage").click(function () {
                 //设置页号
+                if(!$('#pageindex').val()){
+                    $('#pageindex').val(0);
+                }
                 $('#pageindex').val(parseInt($('#pageindex').val()) + 1);
                 searchProduct();
             });
