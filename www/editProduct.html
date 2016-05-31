@@ -98,7 +98,7 @@
                     editor.html(editorHtml);
                     editor.sync();//editor同步数据
 
-        } else if (result.result === 1) {
+                } else if (result.result === 1) {
                     var msg = new $.zui.Messager(
                             '<i class="icon-exclamation-sign"></i>获取信息失败', {
                                 placement: 'center',
@@ -123,51 +123,52 @@
                 msg.show();
             },
         });
-    });
 
-    //上传编辑的信息
-    $("#edit_submit").click(function () {
-        $.ajax({
-            type: 'POST',
-            crossDomain: true,
-            url: serverUrl() + '/index.php?m=ManageProduct&f=saveEdit',
-            data: new FormData($("#editInfo")[0]),
-            dataType: 'json',
-            processData: false,
-            contentType: false,
-            success: function (result) {
-                if (result.result === 0) {
+        //上传编辑的信息
+        $("#edit_submit").click(function () {
+            editor.sync();//editor同步数据
+            $.ajax({
+                type: 'POST',
+                crossDomain: true,
+                url: serverUrl() + '/index.php?m=ManageProduct&f=saveEdit',
+                data: new FormData($("#editInfo")[0]),
+                dataType: 'json',
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if (result.result === 0) {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-ok-sign"></i>保存成功', {
+                                    placement: 'center',
+                                    type: 'success'
+                                });
+                        msg.show();
+                        window.location.reload();
+                    } else if (result.result === 1) {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-exclamation-sign"></i>' + result.error, {
+                                    placement: 'center',
+                                    type: 'danger'
+                                });
+                        msg.show();
+                    } else if (result.result === 2) {
+                        var msg = new $.zui.Messager(
+                                '<i class="icon-warning-sign"></i>管理员未登录！', {
+                                    placement: 'center',
+                                    type: 'warning'
+                                });
+                        msg.show();
+                    }
+                },
+                error: function () {
                     var msg = new $.zui.Messager(
-                            '<i class="icon-ok-sign"></i>保存成功', {
-                                placement: 'center',
-                                type: 'success'
-                            });
-                    msg.show();
-                    window.location.reload();
-                } else if (result.result === 1) {
-                    var msg = new $.zui.Messager(
-                            '<i class="icon-exclamation-sign"></i>' + result.error, {
+                            '<i class="icon-exclamation-sign"></i>网络有问题！', {
                                 placement: 'center',
                                 type: 'danger'
                             });
                     msg.show();
-                } else if (result.result === 2) {
-                    var msg = new $.zui.Messager(
-                            '<i class="icon-warning-sign"></i>管理员未登录！', {
-                                placement: 'center',
-                                type: 'warning'
-                            });
-                    msg.show();
-                }
-            },
-            error: function () {
-                var msg = new $.zui.Messager(
-                        '<i class="icon-exclamation-sign"></i>网络有问题！', {
-                            placement: 'center',
-                            type: 'danger'
-                        });
-                msg.show();
-            },
+                },
+            });
         });
     });
 </script>
