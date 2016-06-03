@@ -65,18 +65,18 @@ class ProductModel extends Model
         $sql = "select d.productid,d.productname,d.price,d.cover,s.sales,s.avescore"
             . " from productdetail d left join productsummary s on d.productid = s.product"
             . " where d.isused=1 and d.isdelete=0 and d.productname like '%$productname%'"
-            . " order by s.summaryid desc";
+            . " order by ";
         if ($byPrice == 1) {
-            $sql = $sql . ",d.price desc";
+            $sql = $sql . "d.price,";
         }
         if ($byScore == 1) {
-            $sql = $sql . ",s.avescore";
+            $sql = $sql . "s.avescore desc,";
         }
         if ($bySales == 1) {
-            $sql = $sql . ",s.sales";
+            $sql = $sql . "s.sales desc,";
         }
         $start = ($pageIndex - 1) * $pageSize;
-        $sql = $sql . " limit $start,$pageSize";
+        $sql = $sql . "s.summaryid desc limit $start,$pageSize";
         $result = $this->query($sql); //结果集
         if ($result) {
             return [
